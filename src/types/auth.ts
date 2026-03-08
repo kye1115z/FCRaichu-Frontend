@@ -1,3 +1,10 @@
+// 회원가입에 필요한 데이터 타입 정의
+export interface SignUpRequest {
+  userId: string;
+  password: string;
+  nickname: string;
+}
+
 // 로그인 한 유저가 가지고 있을 상태
 export interface User {
   id: number;

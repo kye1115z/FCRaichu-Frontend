@@ -45,16 +45,20 @@ export default function RecordWriteStep() {
     });
   };
 
+  // DONE: 이미지 여러 개
   // image = images를 file 배열로 입력 받기
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return;
-    const file = e.target.files[0];
-    if (!file) return;
 
-    setFormData({
-      ...formData,
-      images: [...formData.images, file],
-    });
+    // FileList를 배열로 변환
+    const selectedFiles = Array.from(e.target.files);
+
+    setFormData((prev) => ({
+      ...prev,
+      images: [...prev.images, ...selectedFiles], // 기존 이미지 배열에 새로 선택한 이미지 이어 붙임.
+    }));
+
+    e.target.value = "";
   };
 
   // TODO: 제출 로직 작성하기
@@ -68,11 +72,11 @@ export default function RecordWriteStep() {
     <form onSubmit={handleSubmit}>
       <input type="text" placeholder="제목" onChange={handleTitleChange} />
       <textarea onChange={handleTextAreaChange}></textarea>
-      {/* TODO: 이미지 여러 개 */}
       {/* TODO: 이미지 프리뷰 */}
       <input
         type="file"
         accept="image/jpg, image/jpeg, image/png"
+        multiple // 이미지 여러 개 받을 수 있게끔
         name="ticket_image"
         onChange={handleImageChange}
       />

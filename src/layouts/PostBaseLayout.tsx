@@ -38,18 +38,27 @@ export default function PostBaseLayout() {
   const [ticketImage, setTicketImage] = useState(""); // 티켓 이미지를 자식으로부터 받아오기
 
   useEffect(() => {
-    // 달력에서 들어오지 않고 헤더나 직접 경로를 입력해서 들어온 경우
-    if (!gameId) {
-      isSeasonPass ? navigate("season-pass") : navigate("general/verify");
+    // 단순 post로 들어온 경우 하위 경로로 밀어넣기
+    const path = location.pathname;
+    if (path === "/post" || path === "/post/") {
+      if (isSeasonPass) {
+        navigate("/post/season-pass", { state: { gameId }, replace: true });
+      } else {
+        navigate("/post/general/verify", { state: { gameId }, replace: true });
+      }
       return;
     }
 
-    // 시즌권 유저인데 general 경로로 들어왔거나, 그 반대의 경우 방어 로직
+    // (1) 시즌권 유저인데 general 경로로 들어왔거나, (2) 일반 유저가 season-pass 경로로 들어온 경우 방어 로직
     const isGeneralPath = location.pathname.includes("/general");
+    const isSeasonPath = location.pathname.includes("/season-pass");
+
     if (isSeasonPass && isGeneralPath) {
-      navigate("season-pass", { state: { gameId }, replace: true });
-    } else if (!isSeasonPass && !isGeneralPath) {
-      navigate("general/verify", { state: { gameId }, replace: true });
+      // (1)
+      navigate("/post/season-pass", { state: { gameId }, replace: true });
+    } else if (!isSeasonPass && isSeasonPath) {
+      // (2)
+      navigate("/post/general/verify", { state: { gameId }, replace: true });
     }
   }, [gameId, isSeasonPass, location.pathname, navigate]);
 

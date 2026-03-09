@@ -43,8 +43,8 @@ export const GameCalendar = () => {
         locale="ko"
         eventClick={(info) => {
           console.log("경기 클릭:", info.event.extendedProps);
-          // TODO: 클릭된 경기 id를 가지고 페이지 이동
-          navigate("/post", {});
+          // DONE: 클릭된 경기 id를 가지고 페이지 이동
+          navigate("/post", { state: { gameId: info.event.id } });
         }}
       />
     </div>

@@ -11,7 +11,7 @@ interface FormData {
 
 // 부모로부터 context로 받아온 데이터 활용하기
 interface PostContext {
-  selectedDate: number;
+  selectedGameId: number;
   ticketImage: string;
 }
 
@@ -19,11 +19,11 @@ interface PostContext {
 export default function RecordWriteStep() {
   const navigation = useNavigate();
   // 경기 데이터
-  const { selectedDate, ticketImage } = useOutletContext<PostContext>();
+  const { selectedGameId, ticketImage } = useOutletContext<PostContext>();
 
   // 직관 기록 post 시 보낼 데이터 정의
   const [formData, setFormData] = useState<FormData>({
-    gameId: selectedDate, // context로 받아온 경기 데이터
+    gameId: selectedGameId, // context로 받아온 경기 데이터
     title: "",
     content: "",
     ticketImage: ticketImage, // context로 받아온 티켓 이미지 데이터

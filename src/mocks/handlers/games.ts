@@ -1,5 +1,5 @@
 import { http, HttpResponse } from "msw";
-import { mockScheduleResponse } from "../data/play";
+import { mockScheduleResponse } from "../data/game";
 
 // 경기 관련 mocking 함수 모아두기
 export const gamesHandler = [

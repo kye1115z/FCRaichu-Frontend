@@ -18,6 +18,7 @@ export interface User {
   nickname: string;
   role: "USER" | "ADMIN";
   points: number;
+  seasonTicket: number;
 }
 
 // 서버에서 데이터 받아올 때 타입

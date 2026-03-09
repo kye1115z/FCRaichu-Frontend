@@ -1,7 +1,16 @@
+import { GameCalendar } from "@/components/home/GameCalendar";
+import { Ranking } from "@/components/home/Ranking";
+import { MyRecords } from "@/components/post/MyRecords";
+
 export default function Home() {
   return (
-    <div>
-      <h1>Home</h1>
-    </div>
+    <main>
+      {/* 캘린더 */}
+      <GameCalendar />
+      {/* 직관 기록 */}
+      <MyRecords />
+      {/* 직관왕 / 승률왕 */}
+      <Ranking />
+    </main>
   );
 }

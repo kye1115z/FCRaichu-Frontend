@@ -1,0 +1,32 @@
+export const mockRecordsResponse = [
+  {
+    postId: 101,
+    gameId: 1,
+    title: "으아",
+    content: "으아아",
+    images: ["example.url"],
+    ticketImage: "url",
+    status: "APPROVED",
+    createdAt: "2026-03-05T20:10:00",
+  },
+  {
+    postId: 102,
+    gameId: 2,
+    title: "으아2",
+    content: "으아아2",
+    images: ["example2.url"],
+    ticketImage: null,
+    status: "APPROVED",
+    createdAt: "2026-03-05T20:10:00",
+  },
+  {
+    postId: 103,
+    gameId: 3,
+    title: "으아3",
+    content: "으아아3",
+    images: ["example3.url"],
+    ticketImage: null,
+    status: "APPROVED",
+    createdAt: "2026-03-05T20:10:00",
+  },
+];

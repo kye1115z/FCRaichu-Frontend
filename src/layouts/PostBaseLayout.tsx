@@ -24,6 +24,9 @@ export default function PostBaseLayout() {
   // 티켓 이미지를 자식으로부터 받아오기
   const [ticketImage, setTicketImage] = useState("");
 
+  // TODO: 유저 정보에 포함되어 있는 season ticket 보고 navigate 바로 처리!
+
+  // TODO: 경로명이 아니라 유저 정보에 포함되어 있는지 확인해서 타이틀 결정!
   // 경로명에 'season-pass' 포함되어 있는지 확인해서 타이틀 결정
   const isSeasonPass = pathname.includes("season-pass");
   const title = isSeasonPass ? "직관 기록하기" : "티켓 인증";

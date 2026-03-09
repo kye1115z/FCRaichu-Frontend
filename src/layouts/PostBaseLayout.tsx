@@ -58,7 +58,6 @@ export default function PostBaseLayout() {
   const title = isSeasonPass ? "직관 기록하기" : "티켓 인증";
 
   // TODO: gameId가 로딩중이거나 체크 중일 때 빈 화면 방지
-  if (!gameId) return null;
 
   return (
     <>

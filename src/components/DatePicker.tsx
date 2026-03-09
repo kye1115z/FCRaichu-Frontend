@@ -27,7 +27,7 @@ export default function DatePicker({ value, onChange }: Props) {
           setGames(res.data);
 
           // 초기값이 없을 때 첫 번째 경기를 기본값으로 설정.
-          if (res.data.length > 0) {
+          if (res.data.length > 0 && !value) {
             onChange(res.data[0].id);
           }
         }

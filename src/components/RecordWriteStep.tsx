@@ -15,7 +15,7 @@ interface PostContext {
   ticketImage: string;
 }
 
-// TODO: 날짜 데이터를 어떻게 받아올지?
+// DONE: 날짜 데이터를 어떻게 받아올지 -> useOutletContext 사용
 export default function RecordWriteStep() {
   const navigation = useNavigate();
   // 경기 데이터

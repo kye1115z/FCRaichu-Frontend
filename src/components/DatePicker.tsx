@@ -13,7 +13,7 @@ interface Props {
   value: number;
   onChange: (id: number) => void;
 }
-// TODO: Date Picker 컴포넌트 만들기
+// DONE: Date Picker 컴포넌트 만들기
 export default function DatePicker({ value, onChange }: Props) {
   // 초기값은 빈 배열
   const [games, setGames] = useState<Game[]>([]);

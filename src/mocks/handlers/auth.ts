@@ -4,7 +4,7 @@ import { mockLoginReponse } from "../data/auth";
 // auth 관련 mocking 함수 모아두기
 export const signUpHandler = [
   // 1. 회원가입 - /api/users 로 들어오는 요청을 모킹한다.
-  http.post("/api/users", async ({ request }) => {
+  http.post("/api/users/join", async ({ request }) => {
     const body = await request.json();
     console.log("회원가입 요청 데이터: ", body);
 

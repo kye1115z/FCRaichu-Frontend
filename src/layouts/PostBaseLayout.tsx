@@ -13,7 +13,7 @@
 // 2-2 는 post/season-pass/new
 // 2-1과 2-2는 같은 컴포넌트 사용할 것.
 
-import DatePicker from "@/components/DatePicker";
+import DatePicker from "@/components/verify/DatePicker";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { useEffect, useState } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";

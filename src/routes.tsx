@@ -4,9 +4,9 @@ import Home from "./pages/Home";
 import Login from "./pages/Login";
 import SignUp from "./pages/SignUp";
 import PostBaseLayout from "./layouts/PostBaseLayout";
-import TicketVerifyStep from "./components/TicketVerifyStep";
-import RecordWriteStep from "./components/RecordWriteStep";
-import SeasonPassStart from "./components/SeasonPassStart";
+import TicketVerifyStep from "./components/post/TicketVerifyStep";
+import RecordWriteStep from "./components/post/RecordWriteStep";
+import SeasonPassStart from "./components/post/SeasonPassStart";
 import VerifySeasonPass from "./pages/VerifySeasonPass";
 import VerifyTicketAdmin from "./pages/VerifyTicketAdmin";
 

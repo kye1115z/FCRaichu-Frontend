@@ -1,4 +1,4 @@
-import TicketVerifyUI from "@/components/TicketVerifyUI";
+import TicketVerifyUI from "@/components/post/TicketVerifyUI";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 

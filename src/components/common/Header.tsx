@@ -7,6 +7,7 @@ export default function Header() {
   //   const navigation = useNavigate();
 
   return (
+    // tailwind로 디자인
     <header>
       <nav>
         <Link to="/" className="logo">

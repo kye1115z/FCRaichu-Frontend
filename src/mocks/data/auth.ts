@@ -8,6 +8,6 @@ export const mockLoginReponse = {
     nickname: "뚱이",
     role: "USER",
     points: 0,
-    seasonTicket: 2026,
+    seasonTicket: 0,
   },
 };

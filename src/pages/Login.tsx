@@ -41,7 +41,7 @@ export default function Login() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="flex flex-col items-center pt-[15rem] w-full h-[calc(100vh-61px)] bg-secondary box-border overflow-hidden"
+      className="flex flex-col items-center pt-60 w-full h-[calc(100vh-61px)] bg-secondary box-border"
     >
       <div className="flex flex-col items-center mb-16">
         <Typography variant="h1" color="text-background" className="mb-4">
@@ -51,7 +51,7 @@ export default function Login() {
           FC라이츄 회원 로그인
         </Typography>
       </div>
-      <div className="flex flex-col items-start w-[500px]">
+      <div className="flex flex-col items-start w-125">
         <div className="flex flex-col gap-8 w-full">
           <Input
             label="ID"

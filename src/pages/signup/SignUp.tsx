@@ -37,7 +37,7 @@ export default function SignUp() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="flex flex-col items-center pt-[15rem] w-full h-[calc(100vh-61px)] bg-secondary box-border overflow-hidden"
+      className="flex flex-col items-center pt-[15rem] w-full h-[calc(100vh-61px)] bg-secondary box-border"
     >
       <div className="flex flex-col items-center mb-16">
         <Typography variant="h1" color="text-background" className="mb-4">

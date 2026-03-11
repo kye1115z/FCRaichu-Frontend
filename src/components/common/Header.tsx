@@ -57,7 +57,7 @@ export default function Header() {
               >
                 Login
               </Link>
-              <div className="w-[1px] h-3 bg-border" />
+              <div className="w-px h-3 bg-border" />
               <Link
                 to="/signup"
                 className="text-button-md text-primary hover:text-hover transition-colors"

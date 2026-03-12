@@ -12,11 +12,10 @@ export const GamePicker = () => {
 
   const handleNextClick = () => {
     if (selectedGameId) {
-      navigate("/post/general/verify", {
+      navigate("/post/new", {
         state: { gameId: selectedGameId },
       });
     }
   };
-  console.log(selectedGameId);
   return <button onClick={handleNextClick}>NEXT</button>;
 };

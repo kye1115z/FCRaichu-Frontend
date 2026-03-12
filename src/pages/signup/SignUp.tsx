@@ -37,7 +37,7 @@ export default function SignUp() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="flex flex-col items-center pt-[15rem] w-full h-[calc(100vh-61px)] bg-secondary box-border"
+      className="flex flex-col items-center pt-40 w-full bg-secondary box-border overflow-hidden"
     >
       <div className="flex flex-col items-center mb-16">
         <Typography variant="h1" color="text-background" className="mb-4">
@@ -48,7 +48,7 @@ export default function SignUp() {
         </Typography>
       </div>
 
-      <div className="flex flex-col items-start w-[500px]">
+      <div className="flex flex-col items-start w-125">
         <div className="flex flex-col gap-8 w-full">
           <Input
             label="ID"

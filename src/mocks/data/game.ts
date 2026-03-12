@@ -8,6 +8,7 @@ export const mockScheduleResponse = [
     awayTeam: "울산HD",
     opponent: "울산HD",
     stadium: "상암 월드컵 경기장",
+    isAttended: true,
   },
   {
     id: 2,
@@ -17,6 +18,7 @@ export const mockScheduleResponse = [
     awayTeam: "전북현대",
     opponent: "전북현대",
     stadium: "상암 월드컵 경기장",
+    isAttended: false,
   },
   {
     id: 3,
@@ -26,5 +28,6 @@ export const mockScheduleResponse = [
     awayTeam: "전북현대2",
     opponent: "전북현대2",
     stadium: "상암 월드컵 경기장",
+    isAttended: true,
   },
 ];

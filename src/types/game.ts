@@ -6,4 +6,5 @@ export interface Game {
   awayTeam: string;
   opponent: string;
   stadium: string;
+  isAttended: boolean;
 }

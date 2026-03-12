@@ -1,0 +1,86 @@
+/* -----------------------------------------
+   FullCalendar Custom Override
+----------------------------------------- */
+
+/* 달력 전체 외곽선 */
+.custom-calendar-wrapper .fc-theme-standard .fc-scrollgrid {
+  border-top: 2px solid var(--color-secondary) !important;
+  border-bottom: 1px solid var(--color-secondary) !important;
+  border-left: none !important;
+  border-right: none !important;
+}
+
+/* 요일 헤더 및 내부 셀 기본 테두리 설정 */
+.custom-calendar-wrapper .fc-theme-standard td,
+.custom-calendar-wrapper .fc-theme-standard th {
+  border-left: none !important;
+  border-right: 1px solid var(--color-border) !important;
+}
+
+/* 달력의 가장 오른쪽 끝 테두리를 제거 */
+.custom-calendar-wrapper .fc-theme-standard td:last-child,
+.custom-calendar-wrapper .fc-theme-standard th {
+  border-right: none !important;
+}
+
+/* 요일 헤더 스타일 추가 적용 */
+.custom-calendar-wrapper .fc-theme-standard th {
+  border-top: none !important;
+  border-bottom: 0.5px solid var(--color-secondary) !important; /* 헤더 아래쪽 굵은 선 */
+  height: 3rem;
+  vertical-align: middle !important;
+  text-align: center;
+  font-weight: 300;
+  font-size: 14px;
+}
+
+/* 셀의 가로선 얇게 설정 */
+.custom-calendar-wrapper .fc-theme-standard td {
+  border-bottom: 1px solid var(--color-border) !important;
+  border-top: none !important;
+}
+
+/* 셀의 날짜 숫자 위치를 우측 상단으로 고정 */
+.custom-calendar-wrapper .fc-daygrid-day-top {
+  display: flex;
+  justify-content: flex-start; /* 이래야 우측 상단이 된다 ?? */
+  padding: 10px 10px 0 0;
+  font-size: 14px;
+}
+
+/* 날짜 셀 높이 고정 및 내용 넘침 방지 */
+.custom-calendar-wrapper .fc-daygrid-day-frame {
+  height: 140px !important;
+  max-height: 140px !important;
+  overflow: hidden;
+  background-color: transparent !important;
+}
+
+/* '오늘' 날짜 하이라이트 */
+.custom-calendar-wrapper .fc .fc-day-today {
+  background-color: transparent !important;
+  box-shadow: inset 0 0 0 2px var(--color-primary) !important;
+}
+
+/* 기존 내부 frame에 있던 테두리 속성은 제거 */
+.custom-calendar-wrapper .fc .fc-day-today .fc-daygrid-day-frame {
+  border: none !important;
+}
+
+.custom-calendar-wrapper .match-day-bg {
+  background-color: var(--color-border) !important; /* 일반 경기일 배경색 */
+}
+
+.custom-calendar-wrapper .attended-day-bg {
+  background-color: var(--color-line) !important; /* 직관한 날 배경색 */
+}
+
+/* FullCalendar 기본 스타일 제거 */
+.custom-calendar-wrapper .fc-event {
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+.custom-calendar-wrapper .fc-daygrid-event-harness {
+  margin-top: 0px !important;
+}

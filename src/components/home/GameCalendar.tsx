@@ -83,17 +83,17 @@ export const GameCalendar = () => {
     `}
     >
       {/* 상단 타이틀 & 커스텀 헤더 */}
-      <div className="mb-10 text-center">
-        <h1
-          className={`mb-24 text-6xl font-extrabold font-serif tracking-wider`}
-        >
+      <div className="text-center">
+        <h1 className={`text-6xl font-extrabold font-serif tracking-wider`}>
           FC SEOUL MATCHES
         </h1>
-        {/* <h2 className="text-xl font-bold">{currentYear}년 {currentMonth}월 FC서울 경기 일정</h2> */}
+        <h2 className="mt-4 text-2xl font-bold">
+          {currentYear}년 {currentMonth}월 FC서울 경기 일정
+        </h2>
       </div>
 
       {/* 달력 날짜 넘기기 & 오늘, 경기일 표시 */}
-      <div className="flex justify-between items-end mb-4 px-2">
+      <div className="flex justify-between items-end mt-16 mb-4 px-2">
         <div className="flex items-center text-3xl font-bold gap-5">
           {/* TODO: 이전, 다음 버튼으로 바꾸기 */}
           <button

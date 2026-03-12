@@ -18,12 +18,12 @@ export interface User {
   nickname: string;
   role: "USER" | "ADMIN";
   points: number;
-  seasonTicket: number;
+  seasonTicket: string;
 }
 
 // 서버에서 데이터 받아올 때 타입
-export interface AuthResponse {
+export interface AuthResponse extends User {
   accessToken: string;
-  tokenType: string;
-  user: User;
+  refreshToken: string;
+  grantType: string;
 }

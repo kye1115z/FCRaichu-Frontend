@@ -25,9 +25,16 @@ export const useAuthStore = create<AuthState>()(
       // 로그인: 서버에서 받은 응답(data)을 스토어에 저장
       setAuth: (data) =>
         set({
-          user: data.user,
+          user: {
+            id: data.id,
+            userId: data.userId,
+            nickname: data.nickname,
+            role: data.role,
+            points: data.points,
+            seasonTicket: data.seasonTicket,
+          },
           accessToken: data.accessToken,
-          tokenType: data.tokenType,
+          tokenType: data.grantType,
         }),
 
       // 로그아웃: 모든 인증 정보를 초기화

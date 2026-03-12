@@ -43,16 +43,32 @@ export const MyRecords = () => {
     fetchData();
   }, []);
   return (
-    <div>
-      {records.map((record) => (
-        <div key={record.postId}>
-          <p>제목: {record.title}</p>
-          <p>내용: {record.content}</p>
-          <img src={record.images?.[0]} alt="직관 기록 대표 이미지" />
-          <p>날짜: {formatDate(record.createdAt)}</p>
-          <p>상태: {record.status}</p>
-        </div>
-      ))}
-    </div>
+    <>
+      <h1 className="text-2xl font-bold text-center mb-8">나의 직관 기록</h1>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 p-4">
+        {records.map((record) => (
+          <div
+            key={record.postId}
+            className="flex flex-col gap-2 p-4 border border-gray-200 rounded-lg shadow-sm"
+          >
+            <p className="font-bold text-lg truncate">제목: {record.title}</p>
+            <p className="text-gray-600 line-clamp-2">내용: {record.content}</p>
+
+            {record.images?.[0] && (
+              <img
+                src={record.images[0]}
+                alt="직관 기록 대표 이미지"
+                className="w-full h-40 object-cover rounded-md"
+              />
+            )}
+
+            <div className="mt-auto pt-2 text-sm text-gray-500">
+              <p>날짜: {formatDate(record.createdAt)}</p>
+              <p>상태: {record.status}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </>
   );
 };

@@ -1,6 +1,6 @@
 import { GameCalendar } from "@/components/home/GameCalendar";
 import { Ranking } from "@/components/home/Ranking";
-import { MyRecords } from "@/components/post/MyRecords";
+import { MyRecords } from "@/components/home/MyPosts";
 
 export default function Home() {
   return (

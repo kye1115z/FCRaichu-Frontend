@@ -69,18 +69,48 @@ export default function RecordWriteStep() {
     navigation("/");
   };
   return (
-    <form onSubmit={handleSubmit}>
-      <input type="text" placeholder="제목" onChange={handleTitleChange} />
-      <textarea onChange={handleTextAreaChange}></textarea>
-      {/* TODO: 이미지 프리뷰 */}
+    <form
+      onSubmit={handleSubmit}
+      className="flex flex-col gap-4 w-full max-w-2xl mx-auto p-4"
+    >
+      <input
+        type="text"
+        placeholder="제목을 입력하세요"
+        onChange={handleTitleChange}
+        className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:border-gray-500 focus:ring-1 focus:ring-gray-500"
+      />
+
+      <textarea
+        placeholder="직관 후기를 작성해주세요"
+        onChange={handleTextAreaChange}
+        className="w-full min-h-50 p-3 border border-gray-300 rounded-md focus:outline-none focus:border-gray-500 focus:ring-1 focus:ring-gray-500 resize-y"
+      ></textarea>
+
+      {/* TODO: 다중 이미지 프리뷰 영역 */}
+      <div className="w-full min-h-25 p-4 border-2 border-dashed border-gray-300 rounded-md bg-gray-50 text-gray-400 text-sm flex items-center justify-center">
+        이미지 프리뷰가 표시될 공간
+      </div>
+
       <input
         type="file"
         accept="image/jpg, image/jpeg, image/png"
-        multiple // 이미지 여러 개 받을 수 있게끔
+        multiple
         name="ticket_image"
         onChange={handleImageChange}
+        className="block w-full text-sm text-gray-500
+          file:mr-4 file:py-2 file:px-4
+          file:rounded-md file:border-0
+          file:text-sm file:font-medium
+          file:bg-gray-200 file:text-gray-700
+          hover:file:bg-gray-300 cursor-pointer"
       />
-      <button type="submit">Send</button>
+
+      <button
+        type="submit"
+        className="w-full py-3 mt-4 border border-gray-300 rounded-md font-medium text-gray-700 hover:bg-gray-100 transition-colors"
+      >
+        Send
+      </button>
     </form>
   );
 }

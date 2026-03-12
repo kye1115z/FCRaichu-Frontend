@@ -50,16 +50,39 @@ export default function DatePicker({ value, onChange }: Props) {
 
   return (
     <>
-      <select value={value} onChange={handleSelectChange}>
-        {games.map((game) => {
-          return (
-            <option key={game.id} value={game.id}>
-              {formatDate(game.date)} - FC서울 vs {game.awayTeam} (
-              {game.stadium})
-            </option>
-          );
-        })}
-      </select>
+      <div className="relative w-full max-w-md mb-5">
+        <select
+          value={value}
+          onChange={handleSelectChange}
+          className="w-full appearance-none bg-transparent border border-gray-300 rounded-md px-4 py-2 pr-10 focus:outline-none focus:border-gray-500 focus:ring-1 focus:ring-gray-500 cursor-pointer"
+        >
+          {games.map((game) => {
+            return (
+              <option key={game.id} value={game.id}>
+                {formatDate(game.date)} - FC서울 vs {game.awayTeam} (
+                {game.stadium})
+              </option>
+            );
+          })}
+        </select>
+
+        <div className="absolute inset-y-0 right-0 flex items-center px-3 pointer-events-none text-gray-500">
+          <svg
+            className="w-5 h-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M19 9l-7 7-7-7"
+            ></path>
+          </svg>
+        </div>
+      </div>
     </>
   );
 }

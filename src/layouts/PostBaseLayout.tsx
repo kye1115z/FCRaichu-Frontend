@@ -15,57 +15,20 @@
 
 import { StepTracker } from "@/components/post/StepTracker";
 import DatePicker from "@/components/verify/DatePicker";
-import { useAuthStore } from "@/stores/useAuthStore";
 import Typography from "@/styles/common/Typography";
-import { useEffect, useState } from "react";
-import { Outlet, useLocation, useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { Outlet, useLocation } from "react-router-dom";
 
 export default function PostBaseLayout() {
   // ⭐️ 이전 페이지에서 gameId를 넘겨준 경우 state 받아와서 분기 처리
   const location = useLocation();
-  const navigate = useNavigate();
   const { gameId } = location.state || {};
 
-  // TODO: 유저 정보에 포함되어 있는 season ticket 보고 navigate 바로 처리!
-  // 시즌 티켓이 null이거나 올해 연도가 아니면 "일반 유저"
-  // 시즌 티켓에 올해 연도 값이 있으면 "시즌권 유저"
-  const user = useAuthStore().user;
-  const currentYear = new Date().getFullYear(); // 올해 연도
-  const isSeasonPass =
-    user?.seasonTicket !== null && Number(user?.seasonTicket) === currentYear;
+  // DONE: 티켓, 시즌 관련 전부 삭제
 
   const [selectedGameId, setSelectedGameId] = useState<number>(
     Number(gameId) || 0,
   ); // 초기값으로 state에서 넘겨받은 gameId 설정
-  const [ticketImage, setTicketImage] = useState(""); // 티켓 이미지를 자식으로부터 받아오기
-
-  useEffect(() => {
-    // 단순 post로 들어온 경우 하위 경로로 밀어넣기
-    const path = location.pathname;
-    if (path === "/post" || path === "/post/") {
-      if (isSeasonPass) {
-        navigate("/post/season-pass", { state: { gameId }, replace: true });
-      } else {
-        navigate("/post/general/date", {
-          state: { gameId: gameId || 1 },
-          replace: true,
-        });
-      }
-      return;
-    }
-
-    // (1) 시즌권 유저인데 general 경로로 들어왔거나, (2) 일반 유저가 season-pass 경로로 들어온 경우 방어 로직
-    const isGeneralPath = location.pathname.includes("/general");
-    const isSeasonPath = location.pathname.includes("/season-pass");
-
-    if (isSeasonPass && isGeneralPath) {
-      // (1)
-      navigate("/post/season-pass", { state: { gameId }, replace: true });
-    } else if (!isSeasonPass && isSeasonPath) {
-      // (2)
-      navigate("/post/general/verify", { state: { gameId }, replace: true });
-    }
-  }, [gameId, isSeasonPass, location.pathname, navigate]);
 
   // TODO: gameId가 로딩중이거나 체크 중일 때 빈 화면 방지
 
@@ -85,11 +48,8 @@ export default function PostBaseLayout() {
       {/* DONE: 날짜 선택 컴포넌트 */}
       <DatePicker value={selectedGameId} onChange={setSelectedGameId} />
 
-      {/* Outlet: "/general" 또는 "/season-pass"를 보여줄 거임  */}
       {/* context로 하위 단계 컴포넌트들에 데이터 전달 */}
-      <Outlet
-        context={{ selectedGameId, isSeasonPass, ticketImage, setTicketImage }}
-      />
+      <Outlet context={{ selectedGameId }} />
     </div>
   );
 }

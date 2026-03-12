@@ -51,8 +51,6 @@ export default function Header() {
                 Home
               </NavLink>
             </li>
-            {/* DONE: 시즌권이면 /post/season-pass로, 일반 티켓이면 /post/general/verify 로. */}
-            {/* -> post로 보내면 알아서 general인지 season-pass인지 판단하도록 로직 구현. */}
             <li>
               <NavLink to="/post" className={navItemStyle}>
                 Post

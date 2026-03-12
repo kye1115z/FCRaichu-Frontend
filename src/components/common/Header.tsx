@@ -1,18 +1,44 @@
 import { useAuthStore } from "@/stores/useAuthStore";
-import { Link, NavLink, type NavLinkRenderProps } from "react-router-dom";
+import {
+  Link,
+  NavLink,
+  useLocation,
+  type NavLinkRenderProps,
+} from "react-router-dom";
 import fcseoul_logo from "@/assets/fcseoul_logo.png";
+import { useEffect, useState } from "react";
 
 export default function Header() {
   // 전역 store에서 user 가져오기 (콕 찝어서 가져와야 다른 상태가 바뀌었을 때 리렌더링 안 됨.)
   const { user } = useAuthStore();
+  const [borderColor, setBorderColor] = useState("secondary");
+  const [backColor, setBackColor] = useState("secondary");
+  const location = useLocation();
+
+  // DONE: 경로에 따라 헤더 색상 바꾸기
+  useEffect(() => {
+    if (location.pathname !== "/signup") {
+      setBackColor("background");
+      setBorderColor("border");
+    } else {
+      setBackColor("secondary");
+      setBorderColor("secondary");
+    }
+  }, [location.pathname]);
 
   const navItemStyle = ({ isActive }: NavLinkRenderProps) =>
     `text-h4 transition-colors ${
-      isActive ? "text-primary font-bold" : "text-textMain hover:text-primary"
+      isActive
+        ? "text-primary font-bold" // 내가 위치해 있는 nav라면
+        : location.pathname !== "/signup" // 내가 위치해 있는 헤더가 아닌데~~~
+          ? "text-textMain hover:text-primary" // signup이 아니라면
+          : "text-background hover:text-primary" // signup이라면
     }`;
 
   return (
-    <header className="w-full border-b border-border bg-white sticky top-0 z-50">
+    <header
+      className={`w-full border-b border-${borderColor} bg-${backColor} sticky top-0 z-50`}
+    >
       <nav className="flex flex-row items-center justify-between w-full h-15 px-10 mx-auto">
         <div className="flex items-center gap-10">
           <Link to="/" className="flex items-center">
@@ -57,7 +83,7 @@ export default function Header() {
               >
                 Login
               </Link>
-              <div className="w-[1px] h-3 bg-border" />
+              <div className="w-px h-3 bg-border" />
               <Link
                 to="/signup"
                 className="text-button-md text-primary hover:text-hover transition-colors"

@@ -126,8 +126,3 @@ table {
   border-collapse: collapse;
   border-spacing: 0;
 }
-
-html {
-  /* 스크롤바 처리 */
-  scrollbar-gutter: stable both-edges;
-}

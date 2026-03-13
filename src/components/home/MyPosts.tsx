@@ -1,5 +1,6 @@
 import { getGames } from "@/apis/games/gameApi";
-import { getMyRecords } from "@/apis/posts/postApi";
+import { getMyAllRecords } from "@/apis/posts/postApi";
+import { useAuthStore } from "@/stores/useAuthStore";
 import Typography from "@/styles/common/Typography";
 import type { Game } from "@/types/game";
 import type { Post } from "@/types/post";
@@ -8,6 +9,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 export const MyRecords = () => {
+  const { user } = useAuthStore();
   const navigate = useNavigate();
   const [records, setRecords] = useState<Post[]>([]);
 
@@ -17,7 +19,7 @@ export const MyRecords = () => {
     const fetchData = async () => {
       try {
         const [recordsRes, gameRes] = await Promise.all([
-          getMyRecords(),
+          getMyAllRecords(),
           getGames(),
         ]);
 
@@ -52,7 +54,7 @@ export const MyRecords = () => {
   };
 
   const handleAllPosts = () => {
-    navigate("/post/all");
+    navigate(`/post/${user?.id}/all`);
   };
 
   return (
@@ -111,7 +113,7 @@ export const MyRecords = () => {
             </div>
 
             {record.images?.[0] && (
-              <div className="w-1/3 min-w-62.5 overflow-hidden rounded-xl">
+              <div className="w-72 h-72 overflow-hidden rounded-xl">
                 <img
                   src={record.images[0]}
                   alt="직관 기록 이미지"
@@ -126,7 +128,7 @@ export const MyRecords = () => {
       {/*  */}
       <div className="text-center mt-8">
         <button
-          onClick={() => handleAllPosts}
+          onClick={handleAllPosts}
           className="text-gray-400 border-b border-gray-400 pb-1 text-lg hover:text-primary hover:border-primary transition-all cursor-pointer font-medium"
         >
           전체 글 보러 가기

@@ -43,7 +43,7 @@ export default function Header() {
               </NavLink>
             </li>
             <li>
-              <NavLink to="/post" className={navItemStyle}>
+              <NavLink to="/post" end className={navItemStyle}>
                 직관 기록하기
               </NavLink>
             </li>

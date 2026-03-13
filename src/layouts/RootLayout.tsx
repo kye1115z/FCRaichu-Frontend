@@ -1,10 +1,12 @@
 import Header from "@/components/common/Header";
+import Test from "@/pages/Test";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { useEffect, useState } from "react";
-import { Outlet, useLocation } from "react-router-dom";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
 
 // 공통 UI
 export default function RootLayout() {
+  const navigate = useNavigate();
   const [backColor, setBackColor] = useState("background");
   const [gap, setGap] = useState(16);
   const location = useLocation();
@@ -29,6 +31,8 @@ export default function RootLayout() {
     <div className={`flex flex-col min-h-screen gap-${gap} bg-${backColor}`}>
       {/* DONE: 로그인 경로에서 헤더 없애기 */}
       {location.pathname !== "/login" && <Header />}
+
+      <button onClick={() => navigate("/test")}>TEST</button>
 
       <main className="flex-1 w-full mx-auto">
         <Outlet />

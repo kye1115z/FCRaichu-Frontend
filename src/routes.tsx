@@ -23,16 +23,6 @@ export const router = createBrowserRouter([
     ],
   },
   {
-    path: "/admin",
-    element: <AdminLayout />,
-    children: [
-      {
-        path: "verify-tickets",
-        element: <VerifyTicketAdminTest />,
-      },
-    ],
-  },
-  {
     path: "/",
     element: <RootLayout />, // 공통 레이아웃 적용
     children: [

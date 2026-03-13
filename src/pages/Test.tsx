@@ -112,7 +112,7 @@ function Test() {
 
     try {
       const params = new URLSearchParams();
-      params.append("client_id", "my-auth-form");
+      params.append("client_id", "react");
       params.append("grant_type", "refresh_token");
       params.append("refresh_token", refreshToken);
 

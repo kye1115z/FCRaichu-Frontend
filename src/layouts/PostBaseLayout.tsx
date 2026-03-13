@@ -16,7 +16,7 @@
 // 2-1과 2-2는 같은 컴포넌트 사용할 것.
 
 import { StepTracker } from "@/components/post/StepTracker";
-import DatePicker from "@/components/verify/DatePicker";
+import DatePicker from "@/components/post/DatePicker";
 import Typography from "@/styles/common/Typography";
 import { useState } from "react";
 import { Outlet, useLocation } from "react-router-dom";

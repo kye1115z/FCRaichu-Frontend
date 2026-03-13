@@ -15,7 +15,6 @@
   animation: scroll 30s linear infinite; /* 무한 반복 */
 }
 
-/* 마우스를 올렸을 때 멈추게 하고 싶다면 (선택사항) */
 .logos:hover {
   animation-play-state: paused;
 }

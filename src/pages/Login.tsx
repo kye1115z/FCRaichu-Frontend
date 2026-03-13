@@ -42,11 +42,11 @@ export default function Login() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="flex flex-col items-center pt-40 w-full h-screen
-      bg-secondary box-border overflow-hidden"
+      className="flex flex-col items-center justify-center pt-29 pb-10 w-full h-screen
+      bg-secondary box-border overflow-x-hidden"
     >
       <LogoAnimation />
-      <div className="flex flex-col items-center mb-16">
+      <div className="flex flex-col items-center mb-8">
         <Typography variant="h1" color="text-background" className="mb-4">
           로그인
         </Typography>
@@ -71,7 +71,7 @@ export default function Login() {
           />
         </div>
 
-        <Button type="submit" width="fixed" className="mt-16">
+        <Button type="submit" width="fixed" className="mt-8">
           로그인
         </Button>
       </div>

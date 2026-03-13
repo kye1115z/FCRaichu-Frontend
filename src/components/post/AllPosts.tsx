@@ -35,7 +35,7 @@ export const AllPosts = () => {
     fetchPosts();
   }, []);
 
-  // TODO: 스크롤 할 때 같은 줄에 여러 연도가 함께 있으면 25, 26 아주 정신을 못 차리는 에러 발생.
+  // DONE: 스크롤 할 때 같은 줄에 여러 연도가 함께 있으면 25, 26 아주 정신을 못 차리는 에러 발생.
   // 섹션을 감지하는 로직
   const visibleElements = useRef(new Map<Element, string>()); // 하나의 줄에 있는 연도 담기
 

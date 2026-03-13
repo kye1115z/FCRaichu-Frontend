@@ -30,7 +30,7 @@ export default function Input({
 
           focus:border-[1.5px] focus:border-primary
 
-          ${error ? "!border-primary" : ""}
+          ${error ? "border-primary!" : ""}
           ${className}
           `}
         {...props}

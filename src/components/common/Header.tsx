@@ -39,12 +39,17 @@ export default function Header() {
           <ul className="flex items-center gap-8">
             <li>
               <NavLink to="/" className={navItemStyle}>
-                Home
+                My FC Seoul
               </NavLink>
             </li>
             <li>
               <NavLink to="/post" className={navItemStyle}>
-                Post
+                직관 기록하기
+              </NavLink>
+            </li>
+            <li>
+              <NavLink to={`/post/${user?.id}/all`} className={navItemStyle}>
+                나의 직관 기록
               </NavLink>
             </li>
             <li>

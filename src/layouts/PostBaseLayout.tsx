@@ -21,7 +21,7 @@ import Typography from "@/styles/common/Typography";
 import { useState } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 
-export default function PostBaseLayout() {
+export default function PostWriteBaseLayout() {
   // ⭐️ 이전 페이지에서 gameId를 넘겨준 경우 state 받아와서 분기 처리
   const location = useLocation();
   const { gameId } = location.state || {};

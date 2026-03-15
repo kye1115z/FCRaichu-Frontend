@@ -1,5 +1,3 @@
-"use client";
-
 import { useEffect, useRef, useState } from "react";
 import { getGames } from "@/apis/games/gameApi";
 import type { Game } from "@/types/game";
@@ -11,6 +9,11 @@ import { useNavigate } from "react-router-dom";
 
 import "./GameCalendar.css";
 import Typography from "@/styles/common/Typography";
+
+import {
+  MdOutlineArrowBackIos,
+  MdOutlineArrowForwardIos,
+} from "react-icons/md";
 
 export const GameCalendar = () => {
   const navigate = useNavigate();
@@ -24,14 +27,14 @@ export const GameCalendar = () => {
   // ------------ 경기 일정 데이터 받아오기
   useEffect(() => {
     const fetchGamesData = async () => {
-      const res = await getGames();
+      const res = await getGames(currentYear, currentMonth);
       if (res.status === 200) {
         setGames(res.data);
       }
     };
 
     fetchGamesData();
-  }, []);
+  }, [currentYear, currentMonth]);
 
   // 캘린더에 입력할 데이터로 변환
   const events = games.map((game) => {
@@ -58,6 +61,27 @@ export const GameCalendar = () => {
     }
   };
 
+  // 특정 연/월로 이동하는 함수
+  const goToDate = (year: number, month: number) => {
+    const calendarApi = calendarRef.current?.getApi();
+    if (calendarApi) {
+      calendarApi.gotoDate(`${year}-${String(month).padStart(2, "0")}-01`);
+      updateHeaderDate();
+    }
+  };
+
+  // 연도 변경 핸들러
+  const handleYearChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newYear = parseInt(e.target.value);
+    goToDate(newYear, currentMonth);
+  };
+
+  // 월 변경 핸들러
+  const handleMonthChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newMonth = parseInt(e.target.value);
+    goToDate(currentYear, newMonth);
+  };
+
   // 컴포넌트 마운트 시 헤더 날짜 초기화
   useEffect(() => {
     setTimeout(updateHeaderDate, 0);
@@ -71,9 +95,33 @@ export const GameCalendar = () => {
 
   // 다음으로
   const handleNext = () => {
-    calendarRef.current?.getApi().next();
+    const calendarApi = calendarRef.current?.getApi();
+    if (!calendarApi) return;
+
+    const currentDate = calendarApi.getDate();
+    const actualYear = currentDate.getFullYear();
+
+    // 현재 보고 있는 날짜가 올해 12월이면 그 이후로 못 가게 막음
+    if (
+      currentDate.getFullYear() >= actualYear &&
+      currentDate.getMonth() >= 11
+    ) {
+      return;
+    }
+
+    calendarApi.next();
     updateHeaderDate();
   };
+
+  // 2010년부터 올해까지만 연도 옵션으로 보여주기
+  const startYear = 2010;
+  const actualYear = new Date().getFullYear();
+
+  const yearOptions = Array.from(
+    { length: actualYear - startYear + 1 },
+    (_, i) => startYear + i,
+  );
+  const monthOptions = Array.from({ length: 12 }, (_, i) => i + 1);
 
   return (
     <div
@@ -109,26 +157,52 @@ export const GameCalendar = () => {
       {/* 달력 날짜 넘기기 & 오늘, 경기일 표시 */}
       <div className="flex justify-between items-end mt-16 mb-4 px-2">
         <div className="flex items-center text-3xl font-bold gap-5">
-          {/* TODO: 이전, 다음 버튼으로 바꾸기 */}
+          {/* DONE: 이전, 다음 버튼으로 바꾸기 */}
           <button
             onClick={handlePrev}
-            className="hover:text-main transition-colors font-medium"
+            className="hover:text-main transition-colors font-medium cursor-pointer"
           >
-            &lt;
+            <MdOutlineArrowBackIos className="hover:text-primary transition-colors font-medium cursor-pointer" />
           </button>
-          <div className="flex items-center gap-2">
+          {/* DONE: 연도와 월을 select 할 수 있게 바꾸기 */}
+          {/* 연도 */}
+          <div className="relative flex items-center gap-2 group cursor-pointer">
+            <select
+              value={currentYear}
+              onChange={handleYearChange}
+              className="absolute inset-0 opacity-0 cursor-pointer z-10 w-full"
+            >
+              {yearOptions.map((y) => (
+                <option key={y} value={y}>
+                  {y}년
+                </option>
+              ))}
+            </select>
             <span>{currentYear}</span>
-            <span className="text-[10px] align-top">▼</span>
+            <span className="text-[10px] align-top group-hover:text-primary transition-colors">
+              ▼
+            </span>
           </div>
-          <div className="flex items-center gap-2">
+          {/* 월 */}
+          <div className="relative flex items-center gap-2 group cursor-pointer">
+            <select
+              value={currentMonth}
+              onChange={handleMonthChange}
+              className="absolute inset-0 opacity-0 cursor-pointer z-10 w-full"
+            >
+              {monthOptions.map((m) => (
+                <option key={m} value={m}>
+                  {m}월
+                </option>
+              ))}
+            </select>
             <span>{currentMonth}</span>
-            <span className="text-[10px] align-top ml-5">▼</span>
+            <span className="text-[10px] align-top group-hover:text-primary transition-colors">
+              ▼
+            </span>
           </div>
-          <button
-            onClick={handleNext}
-            className="hover:text-main transition-colors font-medium"
-          >
-            &gt;
+          <button onClick={handleNext}>
+            <MdOutlineArrowForwardIos className="hover:text-primary transition-colors font-medium cursor-pointer" />
           </button>
         </div>
 

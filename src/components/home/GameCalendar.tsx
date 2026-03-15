@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { getGames } from "@/apis/games/gameApi";
+import { getGames, getGuestGames } from "@/apis/games/gameApi";
 import type { Game } from "@/types/game";
 
 import FullCalendar from "@fullcalendar/react";
@@ -14,9 +14,13 @@ import {
   MdOutlineArrowBackIos,
   MdOutlineArrowForwardIos,
 } from "react-icons/md";
+import { useAuthStore } from "@/stores/useAuthStore";
 
 export const GameCalendar = () => {
   const navigate = useNavigate();
+  const { isLoggedIn } = useAuthStore();
+  const loggedIn = isLoggedIn();
+
   const [games, setGames] = useState<Game[]>([]);
 
   // ------------ 날짜 넘길 때 필요한 상태와 Ref
@@ -27,9 +31,15 @@ export const GameCalendar = () => {
   // ------------ 경기 일정 데이터 받아오기
   useEffect(() => {
     const fetchGamesData = async () => {
-      const res = await getGames(currentYear, currentMonth);
-      if (res.status === 200) {
-        setGames(res.data);
+      try {
+        const fetchFn = loggedIn ? getGames : getGuestGames;
+        const res = await fetchFn(currentYear, currentMonth);
+
+        if (res.status === 200) {
+          setGames(res.data);
+        }
+      } catch (e) {
+        console.log(e);
       }
     };
 
@@ -259,9 +269,14 @@ export const GameCalendar = () => {
         }}
         eventContent={(arg) => {
           const gameData = arg.event.extendedProps;
+          const isFuture = new Date(arg.event.startStr) > new Date();
 
           return (
-            <div className="flex flex-col items-center justify-center mt-3 w-full cursor-pointer hover:scale-105 transition-transform">
+            // DONE: 오늘 날짜 이후는 클릭 방지
+            <div
+              className={`flex flex-col items-center justify-center mt-3 w-full 
+                transition-transform ${isFuture ? "cursor-default opacity-60" : "cursor-pointer hover:scale-105"}`}
+            >
               {/* TODO: gameData.opponent 에 맞춰서 맞는 로고 넣기 */}
               <img
                 src={
@@ -272,17 +287,29 @@ export const GameCalendar = () => {
                 className="w-10 h-10 object-contain mb-1.5"
               />
               {/* 시간 */}
-              <div className="text-[11px] font-bold text-[#1A1A1B]">
+              <div className="text-[11px] font-bold text-textMain">
                 {gameData.time || "19:00"}
               </div>
               {/* 경기장 */}
-              <div className="text-[10px] text-gray-600 mt-0.5 whitespace-nowrap">
+              <div className="text-[10px] text-textSub mt-1 whitespace-nowrap">
                 {gameData.stadium || "상암 월드컵 경기장"}
               </div>
             </div>
           );
         }}
         eventClick={(info) => {
+          // DONE: 오늘 날짜 이후는 클릭 방지
+          const eventDate = new Date(info.event.startStr);
+          const today = new Date();
+
+          today.setHours(0, 0, 0, 0);
+          eventDate.setHours(0, 0, 0, 0);
+
+          if (eventDate > today) {
+            alert("미래 경기는 아직 기록할 수 없습니다.");
+            return;
+          }
+
           console.log("경기 클릭:", info.event.extendedProps);
           // DONE: 클릭된 경기 id를 가지고 페이지 이동
           navigate("/post", { state: { gameId: info.event.id } });

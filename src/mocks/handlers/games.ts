@@ -10,6 +10,12 @@ export const gamesHandler = [
     return HttpResponse.json(mockScheduleResponse, { status: 200 });
   }),
 
+  // 게스트 경기 일정
+  http.get("/api/games/guest", async () => {
+    // 경기 일정 데이터 반환
+    return HttpResponse.json(mockScheduleResponse, { status: 200 });
+  }),
+
   http.get("/api/games/:id", async () => {
     // 경기 일정 데이터 반환
     return HttpResponse.json(mockGameResponse, { status: 200 });

@@ -7,8 +7,6 @@ export interface Post {
   title: string;
   content: string;
   images: string[];
-  ticketImage: string;
-  status: string;
   createdAt: string;
   game?: Game;
 }

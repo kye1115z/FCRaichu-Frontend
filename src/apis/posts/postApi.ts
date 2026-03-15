@@ -12,3 +12,9 @@ export const postMyRecord = async (data: PostRequest) => {
   const res = await api.post(`/api/posts`, data);
   return res;
 };
+
+// 특정 게시물 상세 조회
+export const getRecordById = async (id: number) => {
+  const res = await api.get(`/api/posts/${id}`);
+  return res;
+};

@@ -17,7 +17,7 @@ export default function LogoAnimation() {
       </div>
 
       {/* 뒤에 로고 무한히 흐르도록 하자 */}
-      {/* TODO: 팀원들 의견 묻고 gray로 하고 호버 할 때 색상 변하게 할지, 아니면 처음부터 색상 있게 할지 */}
+      {/* DONE: 팀원들 의견 묻고 gray로 하고 호버 할 때 색상 변하게 할지, 아니면 처음부터 색상 있게 할지 */}
       <div className={styles.logos}>
         {infiniteTeams.map((team) => (
           <img

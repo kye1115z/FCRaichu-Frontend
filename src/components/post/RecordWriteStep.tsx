@@ -73,7 +73,7 @@ export default function RecordWriteStep() {
     e.target.value = "";
   };
 
-  // TODO: 제출 로직 작성하기
+  // DONE: 제출 로직 작성하기
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {

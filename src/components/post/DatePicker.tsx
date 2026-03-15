@@ -1,11 +1,13 @@
-import { getGames } from "@/apis/games/gameApi";
+import { getAllGames } from "@/apis/games/gameApi";
+import Typography from "@/styles/common/Typography";
 import { formatDate } from "@/utils/formatDate";
 import { useEffect, useState } from "react";
+import { LuCalendarDays } from "react-icons/lu";
 
 interface Game {
   id: number;
   date: string;
-  awayTeam: string;
+  opponent: string;
   stadium: string;
 }
 
@@ -22,7 +24,7 @@ export default function DatePicker({ value, onChange }: Props) {
   useEffect(() => {
     const fetchGames = async () => {
       try {
-        const res = await getGames();
+        const res = await getAllGames();
         if (res.status === 200) {
           setGames(res.data);
 
@@ -48,39 +50,49 @@ export default function DatePicker({ value, onChange }: Props) {
     }
   };
 
+  // 현재 선택된 게임
+  const selectedGame = games.find((game) => game.id === value);
+
   return (
     <>
-      <div className="relative w-full max-w-md mb-5">
-        <select
-          value={value}
-          onChange={handleSelectChange}
-          className="w-full appearance-none bg-transparent border border-gray-300 rounded-md px-4 py-2 pr-10 focus:outline-none focus:border-gray-500 focus:ring-1 focus:ring-gray-500 cursor-pointer"
-        >
-          {games.map((game) => {
-            return (
-              <option key={game.id} value={game.id}>
-                {formatDate(game.date)} - FC서울 vs {game.awayTeam} (
-                {game.stadium})
-              </option>
-            );
-          })}
-        </select>
+      <div className="w-full max-w-2xl mb-8">
+        <div className="flex items-center gap-2 mb-4">
+          <LuCalendarDays className="text-primary text-xl" />
+          <Typography variant="h3" color="text-subText" className="font-bold!">
+            경기 일정
+          </Typography>
+        </div>
 
-        <div className="absolute inset-y-0 right-0 flex items-center px-3 pointer-events-none text-gray-500">
-          <svg
-            className="w-5 h-5"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
+        <div className="relative group">
+          <div
+            className="px-4 py-4 w-full bg-light border-2 border-disabled 
+          rounded-xl transition-all group-hover:border-primary"
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M19 9l-7 7-7-7"
-            ></path>
-          </svg>
+            <p className="text-lg font-medium text-gray-800">
+              {selectedGame ? (
+                <>
+                  {formatDate(selectedGame.date)}{" "}
+                  <span className="mx-2">/</span> {selectedGame.opponent}{" "}
+                  <span className="mx-2">/</span> {selectedGame.stadium}
+                </>
+              ) : (
+                "경기를 선택해주세요"
+              )}
+            </p>
+          </div>
+
+          {/* 투명한 select는 덮어주기 */}
+          <select
+            value={value}
+            onChange={handleSelectChange}
+            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+          >
+            {games.map((game) => (
+              <option key={game.id} value={game.id}>
+                {formatDate(game.date)} / {game.opponent} / {game.stadium}
+              </option>
+            ))}
+          </select>
         </div>
       </div>
     </>

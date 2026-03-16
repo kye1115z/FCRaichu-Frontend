@@ -55,9 +55,7 @@ export default function Header() {
             <li>
               <NavLink
                 to="/"
-                className={({ isActive }) =>
-                  `${getNavItemStyle(isActive)} italic text-primary text-xl`
-                }
+                className={`italic text-primary text-xl font-bold`}
               >
                 MY FC SEOUL
               </NavLink>

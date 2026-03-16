@@ -101,11 +101,19 @@ export const AllPosts = () => {
     <>
       <div className="relative w-full min-h-screen pb-40">
         <div
-          className="sticky top-15 z-50 flex flex-col items-center pt-40 pb-20
+          className="sticky top-15 z-50 flex flex-col items-center py-20
          bg-background backdrop-blur-md"
         >
-          <Typography variant="display">나의 직관 기록</Typography>
-          <Typography variant="display" color="text-secondary">
+          <Typography
+            variant="display"
+            className="text-5xl! font-black italic tracking-tighter mb-4"
+          >
+            나의 직관 기록 <span className="text-primary"> .</span>
+          </Typography>
+          <Typography
+            variant="display"
+            className="text-5xl! font-black italic tracking-tighter mb-4"
+          >
             {currentYear}
           </Typography>
         </div>

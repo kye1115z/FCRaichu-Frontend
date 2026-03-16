@@ -37,10 +37,14 @@ export default function SignUp() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="flex flex-col items-center pt-40 w-full bg-secondary box-border overflow-hidden"
+      className="flex flex-col items-center pt-24 md:pt-40 px-6 w-full min-h-screen bg-secondary box-border overflow-x-hidden"
     >
-      <div className="flex flex-col items-center mb-16">
-        <Typography variant="h1" color="text-background" className="mb-4">
+      <div className="flex flex-col items-center mb-12 md:mb-16 text-center">
+        <Typography
+          variant="h1"
+          color="text-background"
+          className="mb-4 text-3xl md:text-4xl"
+        >
           회원 가입
         </Typography>
         <Typography variant="h4" color="text-disabledGray">
@@ -48,8 +52,8 @@ export default function SignUp() {
         </Typography>
       </div>
 
-      <div className="flex flex-col items-start w-125">
-        <div className="flex flex-col gap-8 w-full">
+      <div className="flex flex-col items-start w-full max-w-100 md:max-w-125">
+        <div className="flex flex-col gap-6 md:gap-8 w-full">
           <Input
             label="ID"
             name="userId"
@@ -71,7 +75,11 @@ export default function SignUp() {
           />
         </div>
 
-        <Button type="submit" width="fixed" className="mt-16">
+        <Button
+          type="submit"
+          width="fixed"
+          className="mt-12 md:mt-16 w-full md:w-auto self-center md:self-start"
+        >
           가입하기
         </Button>
       </div>

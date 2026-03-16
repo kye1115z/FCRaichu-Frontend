@@ -1,11 +1,12 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Autoplay, FreeMode } from "swiper/modules";
+import { Autoplay, FreeMode, Mousewheel } from "swiper/modules";
 import type { Player } from "@/types/donation";
 import SupportModal from "./SupportModal";
 
 // Swiper 필수 스타일
 import "swiper/swiper-bundle.css";
+import { getAllActivePlayers } from "@/apis/player/player";
 
 // 컨베이어 벨트처럼 흐르게 만드는 CSS
 const swiperStyle = `
@@ -14,67 +15,30 @@ const swiperStyle = `
   }
 `;
 
-// FC서울 주요 선수 데이터
-const fcSeoulPlayers: Player[] = [
-  {
-    id: 1,
-    name: "린가드",
-    position: "MF",
-    backNumber: 10,
-    image: "https://picsum.photos/600/800?random=11",
-  },
-  {
-    id: 2,
-    name: "기성용",
-    position: "MF",
-    backNumber: 6,
-    image: "https://picsum.photos/600/800?random=12",
-  },
-  {
-    id: 3,
-    name: "조영욱",
-    position: "FW",
-    backNumber: 32,
-    image: "https://picsum.photos/600/800?random=13",
-  },
-  {
-    id: 4,
-    name: "임상협",
-    position: "FW",
-    backNumber: 7,
-    image: "https://picsum.photos/600/800?random=14",
-  },
-  {
-    id: 5,
-    name: "강상우",
-    position: "DF",
-    backNumber: 15,
-    image: "https://picsum.photos/600/800?random=15",
-  },
-  {
-    id: 6,
-    name: "최준",
-    position: "DF",
-    backNumber: 22,
-    image: "https://picsum.photos/600/800?random=16",
-  },
-  {
-    id: 7,
-    name: "일류첸코",
-    position: "FW",
-    backNumber: 9,
-    image: "https://picsum.photos/600/800?random=17",
-  },
-];
-
 export default function PlayerSlider() {
+  const [players, setPlayers] = useState<Player[]>([]);
   const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
+
+  useEffect(() => {
+    const fetchPlayer = async () => {
+      try {
+        const res = await getAllActivePlayers();
+        if (res.status === 200) {
+          setPlayers(res.data);
+        }
+      } catch (e) {
+        console.log(e);
+      }
+    };
+
+    fetchPlayer();
+  }, []);
 
   return (
     <div className="w-full py-10">
       <style>{swiperStyle}</style>
       <Swiper
-        modules={[Autoplay, FreeMode]}
+        modules={[Autoplay, FreeMode, Mousewheel]}
         slidesPerView={1.5}
         breakpoints={{
           640: { slidesPerView: 2.5 },
@@ -89,9 +53,13 @@ export default function PlayerSlider() {
           delay: 0,
           disableOnInteraction: false,
         }}
+        mousewheel={{
+          forceToAxis: true, // 가로 스크롤만 허용
+          sensitivity: 2, // 감도 조절
+        }}
         className="continuous-swiper"
       >
-        {fcSeoulPlayers.map((player) => (
+        {players.map((player) => (
           <SwiperSlide key={player.id}>
             <div
               onClick={() => setSelectedPlayer(player)}

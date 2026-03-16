@@ -1,0 +1,20 @@
+@import "tailwindcss";
+
+@keyframes scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    /* 전체 너비의 절반만큼만 이동 */
+    transform: translateX(-50%);
+  }
+}
+
+.logos {
+  @apply flex w-max gap-44; /* 로고 사이 간격 */
+  animation: scroll 30s linear infinite; /* 무한 반복 */
+}
+
+.logos:hover {
+  animation-play-state: paused;
+}

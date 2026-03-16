@@ -31,3 +31,15 @@ export const mockScheduleResponse = [
     isAttended: true,
   },
 ];
+
+// 특정 게임 데이터
+export const mockGameResponse = {
+  id: 1,
+  date: "2026-03-01T19:30:00",
+  round: 1,
+  homeTeam: "FC Seoul",
+  awayTeam: "울산HD",
+  opponent: "울산HD",
+  stadium: "상암 월드컵 경기장",
+  isAttended: true,
+};

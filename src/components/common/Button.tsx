@@ -14,7 +14,7 @@ export default function Button({
     <button
       className={`
         flex items-center justify-center
-        ${width === "fixed" ? "w-[120px]" : "w-full"}
+        ${width === "fixed" ? "w-30" : "w-full"}
         h-12 px-6 py-4
         bg-primary text-white rounded-lg
         text-button-md

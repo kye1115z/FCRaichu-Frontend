@@ -22,8 +22,9 @@ export interface User {
 }
 
 // 서버에서 데이터 받아올 때 타입
-export interface AuthResponse extends User {
+export interface AuthResponse {
   accessToken: string;
   refreshToken: string;
   grantType: string;
+  user: User;
 }

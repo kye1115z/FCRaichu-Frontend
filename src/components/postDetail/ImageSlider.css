@@ -1,0 +1,23 @@
+.ImageSlider-container {
+  --swiper-theme-color: var(
+    --color-primary
+  ); /* 현재 점일 때 색상 -> 메인 컬러로 */
+  --swiper-pagination-bullet-inactive-color: var(
+    --color-disabledGray
+  ); /* 현재 점 아닐 때 */
+  --swiper-pagination-bullet-inactive-opacity: 1; /* 투명도는 100%로 */
+  --swiper-pagination-bullet-size: 10px; /* 점 크기 */
+  --swiper-pagination-bullet-horizontal-gap: 4px; /* 점 갭 */
+}
+
+/* 활성화 된 점 길게 늘리기 */
+.ImageSlider-container .swiper-pagination-bullet-active {
+  width: 20px;
+  border-radius: 5px;
+  transition: width 0.3s ease; /* 부드러운 전환 애니메이션 */
+}
+
+/* 아래서 32px 띄우게끔 */
+.ImageSlider-container .swiper-pagination-bullets.swiper-pagination-horizontal {
+  bottom: 32px;
+}

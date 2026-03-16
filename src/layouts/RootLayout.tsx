@@ -1,4 +1,5 @@
 import Header from "@/components/common/Header";
+import { useAuthStore } from "@/stores/useAuthStore";
 import { useEffect, useState } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 
@@ -6,6 +7,8 @@ import { Outlet, useLocation } from "react-router-dom";
 export default function RootLayout() {
   const [backColor, setBackColor] = useState("background");
   const location = useLocation();
+  const { user } = useAuthStore();
+  const isPostPath = location.pathname.startsWith(`/post/${user?.id}`);
 
   // DONE: 경로에 따라 바탕 색상 바꾸기
   useEffect(() => {
@@ -17,7 +20,9 @@ export default function RootLayout() {
   }, [location.pathname]);
 
   return (
-    <div className={`flex flex-col min-h-screen gap-16 bg-${backColor}`}>
+    <div
+      className={`flex flex-col min-h-screen gap-${isPostPath || location.pathname === "/donation" ? "0" : "16"} bg-${backColor}`}
+    >
       {/* DONE: 로그인 경로에서 헤더 없애기 */}
       {location.pathname !== "/login" && <Header />}
 

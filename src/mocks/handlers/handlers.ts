@@ -1,5 +1,6 @@
 import { signUpHandler } from "./auth";
 import { gamesHandler } from "./games";
+import { playersHandler } from "./players";
 import { recordsHandler } from "./posts";
 import { rankingHandler } from "./ranking";
 
@@ -9,4 +10,5 @@ export const handlers = [
   ...gamesHandler,
   ...recordsHandler,
   ...rankingHandler,
+  ...playersHandler,
 ];

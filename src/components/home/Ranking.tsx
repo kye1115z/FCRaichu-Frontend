@@ -41,7 +41,7 @@ export const Ranking = () => {
         {/* 직관왕 섹션 */}
         <section>
           <div className="flex items-center gap-4 mb-8 border-l-8 border-primary pl-4">
-            <Typography variant="h1" color="text-secondary" className="italic">
+            <Typography variant="h1" color="text-textMain" className="italic">
               ATTENDANCE
             </Typography>
             <span className="bg-secondary text-white text-[10px] px-2 py-1 rounded font-bold uppercase tracking-widest">
@@ -109,8 +109,8 @@ export const Ranking = () => {
         {/* --- 승률왕 섹션 --- */}
         <section>
           <div className="flex items-center gap-4 mb-8 border-l-8 border-secondary pl-4">
-            <Typography variant="h1" color="text-secondary" className="italic">
-              ATTENDANCE
+            <Typography variant="h1" color="text-textMain" className="italic">
+              WINNER RATE
             </Typography>
             <span className="bg-primary text-white text-[10px] px-2 py-1 rounded font-bold uppercase tracking-widest">
               RANK

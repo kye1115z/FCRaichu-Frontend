@@ -1,5 +1,6 @@
 import { getGames } from "@/apis/games/gameApi";
-import { getMyRecords } from "@/apis/posts/postApi";
+import { getMyAllRecords } from "@/apis/posts/postApi";
+import { useAuthStore } from "@/stores/useAuthStore";
 import Typography from "@/styles/common/Typography";
 import type { Game } from "@/types/game";
 import type { Post } from "@/types/post";
@@ -8,6 +9,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 export const MyRecords = () => {
+  const { user } = useAuthStore();
   const navigate = useNavigate();
   const [records, setRecords] = useState<Post[]>([]);
 
@@ -17,7 +19,7 @@ export const MyRecords = () => {
     const fetchData = async () => {
       try {
         const [recordsRes, gameRes] = await Promise.all([
-          getMyRecords(),
+          getMyAllRecords(),
           getGames(),
         ]);
 
@@ -27,16 +29,23 @@ export const MyRecords = () => {
 
           // Games를 Map으로 변환 (빠르게 색인하기 위해서)
           const gameMap = new Map(
-            gamesData.map((game: Game) => [game.id, game]),
+            gamesData.map((game: Game) => [Number(game.id), game]),
           );
+          // Record와 Game 데이터를 합치기 (날짜 최신순으로)
+          const mergedRecords = recordsData
+            .map((record: Post) => ({
+              ...record,
+              game: gameMap.get(Number(record.gameId)) || {},
+            }))
+            .sort(
+              (
+                a: { createdAt: string | number | Date },
+                b: { createdAt: string | number | Date },
+              ) =>
+                new Date(b.createdAt).getTime() -
+                new Date(a.createdAt).getTime(),
+            );
 
-          // Record와 Game 데이터를 합치기
-          const mergedRecords = recordsData.map((record: Post) => ({
-            ...record,
-            game: gameMap.get(record.gameId) || {},
-          }));
-
-          // TODO: 서버에 최신 두 개 API 요청하기
           setRecords(mergedRecords.slice(0, 2));
         }
       } catch (e) {
@@ -48,11 +57,11 @@ export const MyRecords = () => {
   }, []);
 
   const handlePostById = (postId: number) => {
-    navigate(`/post/${postId}`);
+    navigate(`/post/${user?.id}/detail/${postId}`);
   };
 
   const handleAllPosts = () => {
-    navigate("/post/all");
+    navigate(`/post/${user?.id}/all`);
   };
 
   return (
@@ -111,7 +120,7 @@ export const MyRecords = () => {
             </div>
 
             {record.images?.[0] && (
-              <div className="w-1/3 min-w-62.5 overflow-hidden rounded-xl">
+              <div className="w-72 h-72 overflow-hidden rounded-xl">
                 <img
                   src={record.images[0]}
                   alt="직관 기록 이미지"
@@ -126,7 +135,7 @@ export const MyRecords = () => {
       {/*  */}
       <div className="text-center mt-8">
         <button
-          onClick={() => handleAllPosts}
+          onClick={handleAllPosts}
           className="text-gray-400 border-b border-gray-400 pb-1 text-lg hover:text-primary hover:border-primary transition-all cursor-pointer font-medium"
         >
           전체 글 보러 가기

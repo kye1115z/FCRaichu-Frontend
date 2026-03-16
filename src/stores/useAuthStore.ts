@@ -7,6 +7,7 @@ interface AuthState {
   user: User | null; // 사용자가 로그인이 아직 안 된 상태를 대비해서 null
   tokenType: string | null; // JWT 토큰 타입
   accessToken: string | null; // JWT 액세스 토큰
+  isLoggedIn: () => boolean; // 로그인 여부 확인
   setAuth: (data: AuthResponse) => void; // 로그인 성공 시 호출
   logout: () => void; // 로그아웃 시 호출
 }
@@ -15,27 +16,30 @@ interface AuthState {
 export const useAuthStore = create<AuthState>()(
   // persist = 데이터를 로컬 스토리지에 저장해서 새로고침 해도 데이터 유지 가능!
   persist(
-    (set) => ({
+    (set, get) => ({
       // 초기 상태값
       user: null,
       accessToken: null,
       tokenType: null,
 
+      isLoggedIn: () => !!get().accessToken, // 로그인 여부 확인
+
       //   상태 변경 함수
       // 로그인: 서버에서 받은 응답(data)을 스토어에 저장
-      setAuth: (data) =>
+      setAuth: (data: AuthResponse) => {
         set({
           user: {
-            id: data.id,
-            userId: data.userId,
-            nickname: data.nickname,
-            role: data.role,
-            points: data.points,
-            seasonTicket: data.seasonTicket,
+            id: data.user.id,
+            userId: data.user.userId,
+            nickname: data.user.nickname,
+            role: data.user.role,
+            points: data.user.points,
+            seasonTicket: data.user.seasonTicket,
           },
           accessToken: data.accessToken,
           tokenType: data.grantType,
-        }),
+        });
+      },
 
       // 로그아웃: 모든 인증 정보를 초기화
       logout: () =>

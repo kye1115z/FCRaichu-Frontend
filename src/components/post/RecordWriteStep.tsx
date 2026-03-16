@@ -1,32 +1,27 @@
+import { postMyRecord } from "@/apis/posts/postApi";
+import { useAuthStore } from "@/stores/useAuthStore";
+import type { PostRequest } from "@/types/post";
 import React, { useState } from "react";
 import { useNavigate, useOutletContext } from "react-router-dom";
-
-interface FormData {
-  gameId: number;
-  title: string;
-  content: string;
-  ticketImage: string;
-  images: File[];
-}
 
 // 부모로부터 context로 받아온 데이터 활용하기
 interface PostContext {
   selectedGameId: number;
-  ticketImage: string;
 }
 
 // DONE: 날짜 데이터를 어떻게 받아올지 -> useOutletContext 사용
 export default function RecordWriteStep() {
+  const { user } = useAuthStore();
   const navigation = useNavigate();
   // 경기 데이터
-  const { selectedGameId, ticketImage } = useOutletContext<PostContext>();
+  const { selectedGameId } = useOutletContext<PostContext>();
 
   // 직관 기록 post 시 보낼 데이터 정의
-  const [formData, setFormData] = useState<FormData>({
+  const [formData, setFormData] = useState<PostRequest>({
     gameId: selectedGameId, // context로 받아온 경기 데이터
+    userId: Number(user?.id),
     title: "",
     content: "",
-    ticketImage: ticketImage, // context로 받아온 티켓 이미지 데이터
     images: [],
   });
 
@@ -53,20 +48,43 @@ export default function RecordWriteStep() {
     // FileList를 배열로 변환
     const selectedFiles = Array.from(e.target.files);
 
-    setFormData((prev) => ({
-      ...prev,
-      images: [...prev.images, ...selectedFiles], // 기존 이미지 배열에 새로 선택한 이미지 이어 붙임.
-    }));
+    // TODO: 이미지를 string으로 처리할 때 임시 코드. 나중에 file로 바꾸기
+    selectedFiles.forEach((file) => {
+      const reader = new FileReader();
+
+      reader.onloadend = () => {
+        const base64String = reader.result as string;
+
+        setFormData((prev) => ({
+          ...prev,
+          // 기존 배열에 새로운 Base64 문자열 추가
+          images: [...prev.images, base64String],
+        }));
+      };
+
+      reader.readAsDataURL(file); // 파일을 읽기 시작
+    });
+
+    // setFormData((prev) => ({
+    //   ...prev,
+    //   images: [...prev.images, ...selectedFiles], // 기존 이미지 배열에 새로 선택한 이미지 이어 붙임.
+    // }));
 
     e.target.value = "";
   };
 
-  // TODO: 제출 로직 작성하기
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  // DONE: 제출 로직 작성하기
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log(formData);
-
-    navigation("/");
+    try {
+      const res = await postMyRecord(formData);
+      if (res.status === 201) {
+        alert("직관 기록이 완료되었습니다.");
+        navigation(`/post/${res.data.userId}/all`);
+      }
+    } catch (e) {
+      console.log(e);
+    }
   };
   return (
     <form

@@ -1,7 +1,8 @@
 import { useAuthStore } from "@/stores/useAuthStore";
 import type { User } from "@/types/auth";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { NicknameEditModal } from "./NicknameEditModal";
+import { getUserInfo } from "@/apis/auth/authApi";
 
 interface Props {
   user: User;
@@ -9,7 +10,21 @@ interface Props {
 }
 
 export const UserModal = ({ user, setIsModalOpen }: Props) => {
-  const { logout } = useAuthStore();
+  const { updateUser, logout } = useAuthStore();
+  // 모달 열 때 user 정보 불러와서 points 업데이트 해주기
+  useEffect(() => {
+    const fetchUser = async () => {
+      const res = await getUserInfo();
+      if (res.status == 200) {
+        updateUser({
+          ...user,
+          points: res.data.points,
+        });
+      }
+    };
+
+    fetchUser();
+  }, []);
 
   // 닉네임 변경 모달을 위해서
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);

@@ -10,5 +10,11 @@ export const postLogin = async (data: LoginRequest) => {
 // 회원가입 로직
 export const postSingUp = async (data: SignUpRequest) => {
   const res = await api.post(`/api/users/join`, data);
-  return res; // 성공 시 201 Created 응답 반환
+  return res;
+};
+
+// 닉네임 변경 로직
+export const patchNickname = async (nickname: string) => {
+  const res = await api.patch(`/api/users/nickname`, nickname);
+  return res;
 };

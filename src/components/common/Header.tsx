@@ -7,7 +7,7 @@ import {
 } from "react-router-dom";
 import fcseoul_logo from "@/assets/fcseoul_logo.png";
 import { useEffect, useRef, useState } from "react";
-import { UserModal } from "../home/UserModal";
+import { UserModal } from "./UserModal";
 
 export default function Header() {
   // 전역 store에서 user 가져오기 (콕 찝어서 가져와야 다른 상태가 바뀌었을 때 리렌더링 안 됨.)

@@ -9,7 +9,6 @@ import { LuFilePen } from "react-icons/lu";
 import { HiPlus } from "react-icons/hi";
 import { IoCloseCircle } from "react-icons/io5";
 import Typography from "@/styles/common/Typography";
-import imageCompression from "browser-image-compression";
 
 // 부모로부터 context로 받아온 데이터 활용하기
 interface PostContext {
@@ -65,7 +64,7 @@ export default function RecordWriteStep() {
 
   // DONE: 이미지 여러 개
   // image = images를 file 배열로 입력 받기
-  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files) return;
 
@@ -83,35 +82,11 @@ export default function RecordWriteStep() {
     }
 
     const filesToUpload = selectedFiles.slice(0, availableSlots);
+    const newPreviews = filesToUpload.map((file) => URL.createObjectURL(file));
 
-    const options = {
-      maxSizeMB: 10, // 최대 용량 (10MB)
-      maxWidthOrHeight: 1024,
-      useWebWorker: true,
-    };
-
-    try {
-      // 압축
-      const compressedFiles = await Promise.all(
-        filesToUpload.map(async (file) => {
-          // 이미지가 이미 옵션보다 작으면 압축 건너뛰거나 그대로 반환됨
-          return await imageCompression(file, options);
-        }),
-      );
-
-      // 미리보기 URL 생성 및 상태 업데이트
-      const newPreviews = compressedFiles.map((file) =>
-        URL.createObjectURL(file),
-      );
-
-      setImageFiles((prev) => [...prev, ...compressedFiles]);
-      setPreviews((prev) => [...prev, ...newPreviews]);
-
-      e.target.value = "";
-    } catch (error) {
-      console.error("이미지 압축 실패:", error);
-      alert("이미지 처리 중 오류가 발생했습니다.");
-    }
+    setImageFiles((prev) => [...prev, ...filesToUpload]);
+    setPreviews((prev) => [...prev, ...newPreviews]);
+    e.target.value = ""; // 동일 파일 재선택 가능하도록 초기화
   };
 
   // 기존 이미지 삭제 (상태에서만 제거)

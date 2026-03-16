@@ -48,7 +48,7 @@ export default function PlayerSlider() {
         spaceBetween={30}
         loop={true}
         freeMode={true}
-        speed={8000} // 8초 동안 한 바퀴 흐름
+        speed={6000} // 8초 동안 한 바퀴 흐름
         autoplay={{
           delay: 0,
           disableOnInteraction: false,

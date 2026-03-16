@@ -55,7 +55,7 @@ export default function DatePicker({ value, onChange }: Props) {
 
   return (
     <>
-      <div className="w-full max-w-2xl mb-8">
+      <div className="w-full max-w-5xl mb-8">
         <div className="flex items-center gap-2 mb-4">
           <LuCalendarDays className="text-primary text-xl" />
           <Typography variant="h3" color="text-subText" className="font-bold!">

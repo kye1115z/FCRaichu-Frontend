@@ -1,10 +1,5 @@
 import { useAuthStore } from "@/stores/useAuthStore";
-import {
-  Link,
-  NavLink,
-  useLocation,
-  type NavLinkRenderProps,
-} from "react-router-dom";
+import { Link, NavLink, useLocation } from "react-router-dom";
 import fcseoul_logo from "@/assets/fcseoul_logo.png";
 import { useEffect, useRef, useState } from "react";
 import { UserModal } from "./UserModal";
@@ -29,13 +24,15 @@ export default function Header() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  // 페이지에 따라 배경색 바꿀 때 필요한 코드
   const isSpecialPage =
     location.pathname === "/signup" || location.pathname === "/donation";
 
   const headerBg = isSpecialPage ? "bg-secondary" : "bg-background";
   const headerBorder = isSpecialPage ? "border-secondary" : "border-border";
 
-  const navItemStyle = ({ isActive }: NavLinkRenderProps) =>
+  // 활성화 상태를 결정하는 함수 (Best Practice: 외부에서 판단 로직 주입)
+  const getNavItemStyle = (isActive: boolean) =>
     `text-h4 transition-colors font-bold ${
       isActive
         ? "text-primary" // 내가 위치해 있는 nav라면
@@ -58,32 +55,55 @@ export default function Header() {
             <li>
               <NavLink
                 to="/"
-                className={`${navItemStyle} italic text-primary text-xl`}
+                className={({ isActive }) =>
+                  `${getNavItemStyle(isActive)} italic text-primary text-xl`
+                }
               >
                 MY FC SEOUL
               </NavLink>
             </li>
             <li>
-              <NavLink to="/post" end className={navItemStyle}>
+              <NavLink
+                to="/post"
+                className={() =>
+                  // /post 이거나 /post/new 일 때 활성화
+                  getNavItemStyle(
+                    location.pathname === "/post" ||
+                      location.pathname === "/post/new",
+                  )
+                }
+              >
                 직관 기록하기
               </NavLink>
             </li>
             <li>
-              <NavLink to={`/post/${user?.id}/all`} className={navItemStyle}>
+              <NavLink
+                to={`/post/${user?.id}/all`}
+                className={() =>
+                  // /post/:id/all 이거나 /post/:id/detail 이 포함될 때 활성화
+                  getNavItemStyle(
+                    location.pathname.includes(`/post/${user?.id}/all`) ||
+                      location.pathname.includes(`/post/${user?.id}/detail`),
+                  )
+                }
+              >
                 나의 직관 기록
               </NavLink>
             </li>
             <li>
-              <NavLink to="/donation" className={navItemStyle}>
+              <NavLink
+                to="/donation"
+                className={({ isActive }) => getNavItemStyle(isActive)}
+              >
                 Donation
               </NavLink>
             </li>
           </ul>
         </div>
 
-        <div className="flex items-center gap-5 text-body-md">
+        <div className="flex items-center gap-5 text-body-md" ref={modalRef}>
           {user ? (
-            <div className="flex items-center gap-2 text-textSub">
+            <div className="flex items-center gap-2 text-textSub relative">
               <span className="text-body-sm">환영합니다,</span>
               <button
                 className="text-button-md text-primary cursor-pointer"

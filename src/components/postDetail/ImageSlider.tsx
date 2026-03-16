@@ -48,7 +48,7 @@ export const ImageSlider = ({ images }: ImageSliderProps) => {
           >
             <div className="w-full h-full flex items-center justify-center p-12">
               <img
-                src={imgUrl}
+                src={`${import.meta.env.VITE_IMAGE_BASE_URL}${imgUrl}`}
                 alt={`직관 기록 이미지 ${index + 1}`}
                 className="max-w-full max-h-full object-contain shadow-sm select-none"
                 onDragStart={(e) => e.preventDefault()}

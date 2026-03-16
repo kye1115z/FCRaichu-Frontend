@@ -33,7 +33,7 @@ export const useAuthStore = create<AuthState>()(
             nickname: data.user.nickname,
             role: data.user.role,
             points: data.user.points,
-            seasonTicket: data.user.seasonTicket,
+            checkPoint: data.user.checkPoint,
           },
           accessToken: data.accessToken,
           tokenType: data.grantType,

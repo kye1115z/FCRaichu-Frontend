@@ -15,6 +15,7 @@ import {
   MdOutlineArrowForwardIos,
 } from "react-icons/md";
 import { useAuthStore } from "@/stores/useAuthStore";
+import { FC_TEAMS } from "@/data/fc_teams";
 
 export const GameCalendar = () => {
   const navigate = useNavigate();
@@ -288,21 +289,31 @@ export const GameCalendar = () => {
           const gameData = arg.event.extendedProps;
           const isFuture = new Date(arg.event.startStr) > new Date();
 
+          {
+            /* DONE: gameData.opponent 에 맞춰서 맞는 로고 넣기 */
+          }
+          const opponentTeam = FC_TEAMS.find(
+            (fc) => fc.location === gameData.opponent,
+          );
+
           return (
             // DONE: 오늘 날짜 이후는 클릭 방지
             <div
-              className={`flex flex-col items-center justify-center mt-3 w-full 
-                transition-transform ${isFuture ? "cursor-default opacity-60" : "cursor-pointer hover:scale-105"}`}
+              className={`flex flex-col items-center justify-center w-full 
+                transition-transform ${isFuture ? "cursor-default grayscale" : "cursor-pointer hover:scale-105"}`}
             >
-              {/* TODO: gameData.opponent 에 맞춰서 맞는 로고 넣기 */}
-              <img
-                src={
-                  `@/assets/images/logos/${gameData.opponent}` ||
-                  "/default-logo.png"
-                }
-                alt={`${gameData.opponent} logo`}
-                className="w-10 h-10 object-contain mb-1.5"
-              />
+              {opponentTeam ? (
+                <img
+                  src={opponentTeam.image}
+                  alt={`${gameData.opponent} logo`}
+                  className="w-16 h-16 object-contain -mt-8 mb-2"
+                />
+              ) : (
+                <div className="w-10 h-10 mb-1.5 bg-gray-100 rounded-full flex items-center justify-center text-[8px]">
+                  NO LOGO
+                </div>
+              )}
+
               {/* 시간 */}
               <div className="text-[11px] font-bold text-textMain">
                 {gameData.time || "19:00"}

@@ -9,7 +9,7 @@ export default function DonationPage() {
           PLAYER SUPPORT
         </h2>
         <h1 className="text-white text-5xl font-black uppercase leading-tight">
-          당신의 선수를 <br /> 후원하세요{" "}
+          당신의 선수에게 <br /> 후원하세요{" "}
           <span className="text-primary">.</span>
         </h1>
       </div>

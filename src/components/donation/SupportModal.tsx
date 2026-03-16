@@ -1,5 +1,8 @@
 import { useState } from "react";
 import type { Player } from "@/types/donation";
+import { postDonation } from "@/apis/player/player";
+import { useAuthStore } from "@/stores/useAuthStore";
+import "./SupportModal.css";
 
 interface SupportModalProps {
   player: Player;
@@ -7,14 +10,30 @@ interface SupportModalProps {
 }
 
 export default function SupportModal({ player, onClose }: SupportModalProps) {
+  const { user, updateUser } = useAuthStore();
   const [amount, setAmount] = useState<string>("");
 
-  const handleSupport = () => {
-    const points = Number(amount);
-    if (!points || points <= 0) return alert("금액을 정확히 입력해주세요.");
+  const handleSupport = async () => {
+    const supportPoints = Number(amount);
+    if (!supportPoints || supportPoints <= 0)
+      return alert("금액을 정확히 입력해주세요.");
 
-    // API 연결 지점
-    alert(`${player.name} 선수에게 ${points}포인트를 후원합니다! ❤️`);
+    try {
+      const res = await postDonation(player.id, supportPoints);
+      if (res.status === 200) {
+        if (user) {
+          alert(
+            `${player.name} 선수에게 ${supportPoints}포인트를 후원합니다! ❤️`,
+          );
+          updateUser({
+            points: user.points - supportPoints,
+          });
+        }
+      }
+    } catch (e) {
+      console.log(e);
+    }
+
     onClose();
   };
 
@@ -61,7 +80,9 @@ export default function SupportModal({ player, onClose }: SupportModalProps) {
           <div>
             <div className="flex justify-between text-sm mb-3">
               <label className="text-gray-400">후원 포인트</label>
-              <span className="text-primary font-bold">보유: 5,000 P</span>
+              <span className="text-primary font-bold">
+                보유: {user?.points} P
+              </span>
             </div>
             <div className="relative">
               <input

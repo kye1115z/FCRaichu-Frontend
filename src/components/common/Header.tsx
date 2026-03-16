@@ -18,9 +18,9 @@ export default function Header() {
     location.pathname !== "/signup" ? "border-border" : "border-secondary";
 
   const navItemStyle = ({ isActive }: NavLinkRenderProps) =>
-    `text-h4 transition-colors ${
+    `text-h4 transition-colors font-bold ${
       isActive
-        ? "text-primary font-bold" // 내가 위치해 있는 nav라면
+        ? "text-primary" // 내가 위치해 있는 nav라면
         : location.pathname !== "/signup" // 내가 위치해 있는 헤더가 아닌데~~~
           ? "text-textMain hover:text-primary" // signup이 아니라면
           : "text-background hover:text-primary" // signup이라면
@@ -64,10 +64,10 @@ export default function Header() {
           {user ? (
             <div className="flex items-center gap-2 text-textSub">
               <span className="text-body-sm">환영합니다,</span>
-              <span className="text-button-md text-primary">
+              <button className="text-button-md text-primary cursor-pointer">
                 {user.nickname}
-              </span>
-              <span className="text-body-sm">님</span>
+              </button>
+              <button className="text-body-sm">님</button>
             </div>
           ) : (
             <div className="flex items-center gap-4 text-textSub">

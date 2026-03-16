@@ -86,8 +86,9 @@ export default function DatePicker({ value, onChange }: Props) {
               {selectedGame ? (
                 <>
                   {formatDate(selectedGame.date)}{" "}
-                  <span className="mx-2">/</span> {selectedGame.opponent}{" "}
-                  <span className="mx-2">/</span> {selectedGame.stadium}
+                  <span className="mx-2">/</span> FC서울 VS{" "}
+                  {selectedGame.opponent} <span className="mx-2">/</span>{" "}
+                  {selectedGame.stadium}
                 </>
               ) : (
                 "경기를 선택해주세요"

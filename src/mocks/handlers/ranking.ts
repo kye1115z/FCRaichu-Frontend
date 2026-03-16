@@ -1,12 +1,20 @@
 import { http, HttpResponse } from "msw";
-import { mockRankingData } from "../data/ranking";
+import { mockAttendanceRank, mockWinRateRank } from "../data/ranking";
 
 export const rankingHandler = [
-  // 랭킹 조회 api
-  http.get(`/api/ranking`, () => {
+  // 직관왕 조회 api
+  http.get(`/api/ranking/attendance`, () => {
     return HttpResponse.json({
       status: 200,
-      data: mockRankingData,
+      data: mockAttendanceRank,
+    });
+  }),
+
+  // 승률왕 조회 api
+  http.get(`/api/ranking/win-rate`, () => {
+    return HttpResponse.json({
+      status: 200,
+      data: mockWinRateRank,
     });
   }),
 ];

@@ -1,4 +1,7 @@
-import { getRankingList } from "@/apis/ranking/rankApi";
+import {
+  getAttendanceRanking,
+  getWinRateRanking,
+} from "@/apis/ranking/rankApi";
 import { useAuthStore } from "@/stores/useAuthStore";
 import Typography from "@/styles/common/Typography";
 import type { RankingUser } from "@/types/ranking";
@@ -10,15 +13,22 @@ export const Ranking = () => {
   const [rankingData, setRankingData] = useState<{
     attendanceRank: RankingUser[];
     winRateRank: RankingUser[];
-  } | null>(null);
+  }>({
+    attendanceRank: [],
+    winRateRank: [],
+  });
 
   useEffect(() => {
     const fetchRankingList = async () => {
       try {
-        const res = await getRankingList();
-        if (res.status === 200) {
-          setRankingData(res.data);
-        }
+        const [attendanceRes, winRateRes] = await Promise.all([
+          getAttendanceRanking(),
+          getWinRateRanking(),
+        ]);
+        setRankingData({
+          attendanceRank: attendanceRes.data,
+          winRateRank: winRateRes.data,
+        });
       } catch (e) {
         console.log(e);
       }

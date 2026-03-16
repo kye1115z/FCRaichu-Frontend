@@ -9,12 +9,19 @@ import { LuFilePen } from "react-icons/lu";
 import { HiPlus } from "react-icons/hi";
 import { IoCloseCircle } from "react-icons/io5";
 import Typography from "@/styles/common/Typography";
+import { heicTo, isHeic } from "heic-to"; // npm install heic-to 해주기
 
 // 부모로부터 context로 받아온 데이터 활용하기
 interface PostContext {
   selectedGameId: number;
-  initialData: PostRequest;
+  initialData: EditPostInitialData;
   isEditMode: boolean;
+}
+
+interface EditPostInitialData {
+  title: string;
+  content: string;
+  images: string[]; // 기존 이미지 경로들
 }
 
 // DONE: 날짜 데이터를 어떻게 받아올지 -> useOutletContext 사용
@@ -23,6 +30,7 @@ export default function RecordWriteStep() {
   const { user } = useAuthStore();
   const { postId } = useParams();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const previewsRef = useRef<string[]>([]);
 
   // 부모 outlet으로부터 데이터 수신함.
   const context = useOutletContext<PostContext>() || {};
@@ -34,13 +42,56 @@ export default function RecordWriteStep() {
     content: isEditMode ? initialData.content : "",
   });
 
+  const isHeicFile = async (file: File) => {
+    const name = file.name.toLowerCase();
+
+    if (
+      file.type === "image/heic" ||
+      file.type === "image/heif" ||
+      name.endsWith(".heic") ||
+      name.endsWith(".heif")
+    ) {
+      return true;
+    }
+
+    try {
+      return await isHeic(file);
+    } catch {
+      return false;
+    }
+  };
+
+  const convertHeicToJpegFile = async (file: File): Promise<File> => {
+    const outputBlob = await heicTo({
+      blob: file,
+      type: "image/jpeg",
+      quality: 0.9,
+    });
+
+    if (!outputBlob) {
+      throw new Error("HEIC 변환 결과가 없습니다.");
+    }
+
+    const jpegBlob = Array.isArray(outputBlob) ? outputBlob[0] : outputBlob;
+    const originalName = file.name.replace(/\.(heic|heif|png|jpg|jpeg)$/i, "");
+
+    return new File([jpegBlob], `${originalName}.jpg`, {
+      type: "image/jpeg",
+      lastModified: Date.now(),
+    });
+  };
+
   // 이미지 상태 관리 (서버에 저장된 기존 이미지 URL) -> 수정 모드일 때
-  const [existingImages, setExistingImages] = useState<File[]>(
-    isEditMode ? initialData.images : [],
+  const [existingImages, setExistingImages] = useState<string[]>(
+    isEditMode ? initialData.images || [] : [],
   );
 
   const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [previews, setPreviews] = useState<string[]>([]);
+
+  useEffect(() => {
+    previewsRef.current = previews;
+  }, [previews]);
 
   // 부모로부터 Initial 데이터 도착하면 상태 업데이트
   useEffect(() => {
@@ -64,29 +115,60 @@ export default function RecordWriteStep() {
 
   // DONE: 이미지 여러 개
   // image = images를 file 배열로 입력 받기
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files) return;
 
-    // FileList를 배열로 변환
     const selectedFiles = Array.from(files);
 
-    // (기존 이미지 개수 + 새로 추가할 이미지 개수)를!! 체크함.
     const totalCount = existingImages.length + imageFiles.length;
-    // 4개만 업로드 허용하도록
     const availableSlots = 4 - totalCount;
 
     if (availableSlots <= 0) {
       alert("이미지는 최대 4장까지 업로드 할 수 있습니다.");
+      e.target.value = "";
       return;
     }
 
-    const filesToUpload = selectedFiles.slice(0, availableSlots);
-    const newPreviews = filesToUpload.map((file) => URL.createObjectURL(file));
+    const filesToProcess = selectedFiles.slice(0, availableSlots);
 
-    setImageFiles((prev) => [...prev, ...filesToUpload]);
+    const processedFiles: File[] = [];
+
+    // 지우기!!
+    console.log(
+      processedFiles.map((file) => ({
+        name: file.name,
+        type: file.type,
+        size: file.size,
+      })),
+    );
+
+    for (const file of filesToProcess) {
+      try {
+        console.log("선택 파일 정보", {
+          name: file.name,
+          type: file.type,
+          size: file.size,
+        });
+
+        if (await isHeicFile(file)) {
+          const converted = await convertHeicToJpegFile(file);
+          processedFiles.push(converted);
+        } else {
+          processedFiles.push(file);
+        }
+      } catch (error) {
+        console.error(`${file.name} 변환 실패`, error);
+        alert(`${file.name} 파일은 변환에 실패했습니다.`);
+      }
+    }
+
+    const newPreviews = processedFiles.map((file) => URL.createObjectURL(file));
+
+    setImageFiles((prev) => [...prev, ...processedFiles]);
     setPreviews((prev) => [...prev, ...newPreviews]);
-    e.target.value = ""; // 동일 파일 재선택 가능하도록 초기화
+
+    e.target.value = "";
   };
 
   // 기존 이미지 삭제 (상태에서만 제거)
@@ -141,7 +223,9 @@ export default function RecordWriteStep() {
 
   // 메모리 누수 방지: 컴포넌트 언마운트 시 ObjectURL 해제
   useEffect(() => {
-    return () => previews.forEach((url) => URL.revokeObjectURL(url));
+    return () => {
+      previewsRef.current.forEach((url) => URL.revokeObjectURL(url));
+    };
   }, []);
 
   return (
@@ -201,9 +285,10 @@ export default function RecordWriteStep() {
           </button>
 
           <button
+            type="button"
             onClick={() => navigate(-1)}
             className="shrink-0 flex items-center mt-8 gap-2 
-          text-disabledGray hover:text-secondary transition-colors font-bold text-lg cursor-pointer"
+            text-disabledGray hover:text-secondary transition-colors font-bold text-lg cursor-pointer"
           >
             <span className="text-xl">←</span> 이전으로
           </button>
@@ -285,16 +370,16 @@ export default function RecordWriteStep() {
               hidden
               ref={fileInputRef}
               onChange={handleImageChange}
-              accept="image/*"
+              accept="image/*,.heic,.heif"
             />
             <button
               type="button"
-              disabled={imageFiles.length >= 4}
+              disabled={existingImages.length + imageFiles.length >= 4}
               onClick={() => fileInputRef.current?.click()}
               className="w-full py-4 bg-white border border-gray-300 rounded-xl flex items-center justify-center gap-2 text-gray-400 hover:text-primary hover:border-hover transition-all group cursor-pointer"
             >
               <HiPlus className="text-2xl transition-transform" />
-              {imageFiles.length >= 4 && (
+              {existingImages.length + imageFiles.length >= 4 && (
                 <span className="text-sm">최대 갯수 도달</span>
               )}
             </button>

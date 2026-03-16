@@ -28,3 +28,52 @@ api.interceptors.request.use(
     return Promise.reject(error);
   },
 );
+
+// 액세스 토큰에 접근했는데 에러가 나면???
+api.interceptors.response.use(
+  (response) => response, // 성공 시 그대로 반환
+  async (error) => {
+    const originalRequest = error.config;
+
+    // 401 에러(토큰 만료)가 발생했고, 재시도한 적이 없는 요청일 때
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true; // 무한 루프 방지
+
+      try {
+        const { refreshToken, setAuth } = useAuthStore.getState();
+
+        // 리프레시 토큰으로 새 액세스 토큰 요청
+        const params = new URLSearchParams();
+        params.append("client_id", "react");
+        params.append("grant_type", "refresh_token");
+        params.append("refresh_token", refreshToken || "");
+
+        const res = await axios.post(
+          "https://raichu.inwoohub.com/auth/realms/fcraichu/protocol/openid-connect/token",
+          params,
+          { headers: { "Content-Type": "application/x-www-form-urlencoded" } },
+        );
+
+        const {
+          access_token,
+          refresh_token: new_refresh_token,
+          token_type,
+        } = res.data;
+
+        // 새 토큰 저장
+        setAuth(access_token, token_type, new_refresh_token);
+
+        // 실패했던 원래 요청의 헤더를 새 토큰으로 갈아끼우고 재요청
+        originalRequest.headers.Authorization = `${token_type} ${access_token}`;
+        return api(originalRequest);
+      } catch (refreshError) {
+        // 리프레시 토큰까지 만료된 경우 (진짜 로그아웃)
+        useAuthStore.getState().logout();
+        alert("세션이 만료되었습니다. 다시 로그인해주세요.");
+        window.location.href = "/login";
+        return Promise.reject(refreshError);
+      }
+    }
+    return Promise.reject(error);
+  },
+);

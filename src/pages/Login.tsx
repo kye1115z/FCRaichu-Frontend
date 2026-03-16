@@ -1,14 +1,12 @@
-import { postLogin } from "@/apis/auth/authApi.ts";
+import { getLogin } from "@/apis/auth/authApi";
 import Button from "@/components/common/Button";
 import Input from "@/components/common/Input";
 import LogoAnimation from "@/components/login/LogoAnimation";
-import { useAuthStore } from "@/stores/useAuthStore";
 import Typography from "@/styles/common/Typography";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 export default function Login() {
-  const setAuth = useAuthStore((state) => state.setAuth); // 전역 상태 변경 함수!! (zustand)
   const navigate = useNavigate();
 
   // 로그인 시 필요한 데이터 정의
@@ -28,14 +26,12 @@ export default function Login() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const res = await postLogin(loginData); // 미리 정의해둔 postLogin API 함수 사용
-      if (res.status === 200) {
-        setAuth(res.data); // 서버 응답 데이터를 zustand 스토어에 저장.
-        alert("로그인 성공!");
-        navigate("/");
-      }
+      await getLogin(loginData);
+      alert("로그인 성공!");
+      navigate("/");
     } catch (e) {
-      console.log("로그인 실패: ", e);
+      console.error("로그인 실패: ", e);
+      alert("로그인에 실패했습니다. 아이디와 비밀번호를 확인해주세요.");
     }
   };
 

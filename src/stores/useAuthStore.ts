@@ -1,14 +1,22 @@
-import type { AuthResponse, User } from "@/types/auth";
+import type { User } from "@/types/auth";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
 // 유저 상태
 interface AuthState {
   user: User | null; // 사용자가 로그인이 아직 안 된 상태를 대비해서 null
-  tokenType: string | null; // JWT 토큰 타입
-  accessToken: string | null; // JWT 액세스 토큰
+  tokenType: string | null; // key cloak 토큰 타입
+  accessToken: string | null; // key cloak 액세스 토큰
+  refreshToken: string | null; // key cloak 리프레시 토큰
   isLoggedIn: () => boolean; // 로그인 여부 확인
-  setAuth: (data: AuthResponse) => void; // 로그인 성공 시 호출
+  // key cloak 성공적으로 부르면 아래의 내용 받아오기
+  setAuth: (
+    accessToken: string,
+    tokenType: string,
+    refreshToken?: string,
+  ) => void;
+  // 서버에서 성공적으로 데이터 받아오면 아래 내용 추가하기
+  setUser: (user: User) => void;
   updateUser: (userInfo: Partial<User>) => void;
   logout: () => void; // 로그아웃 시 호출
 }
@@ -21,22 +29,34 @@ export const useAuthStore = create<AuthState>()(
       // 초기 상태값
       user: null,
       accessToken: null,
+      refreshToken: null,
       tokenType: null,
 
-      //   상태 변경 함수
-      // 로그인: 서버에서 받은 응답(data)을 스토어에 저장
-      setAuth: (data: AuthResponse) => {
+      // 상태 변경 함수
+      // 유저 정보와 토큰을 따로 나눈다.
+      // 토큰 정보는 key cloak에서 받아온다.
+      setAuth: (
+        accessToken: string,
+        tokenType: string,
+        refreshToken?: string,
+      ) => {
+        set({
+          accessToken,
+          tokenType,
+          refreshToken: refreshToken || get().refreshToken,
+        });
+      },
+
+      setUser: (user: User) => {
         set({
           user: {
-            id: data.user.id,
-            userId: data.user.userId,
-            nickname: data.user.nickname,
-            role: data.user.role,
-            points: data.user.points,
-            checkPoint: data.user.checkPoint,
+            id: user.id,
+            userId: user.userId,
+            nickname: user.nickname,
+            role: user.role,
+            points: user.points,
+            checkPoint: user.checkPoint,
           },
-          accessToken: data.accessToken,
-          tokenType: data.grantType,
         });
       },
 
@@ -56,6 +76,7 @@ export const useAuthStore = create<AuthState>()(
         set({
           user: null,
           accessToken: null,
+          refreshToken: null,
           tokenType: null,
         }),
     }),

@@ -13,6 +13,7 @@ import { useNavigate, useParams } from "react-router-dom"; // react-router-dom �
 export default function PostDetail() {
   const navigate = useNavigate();
   const id = useParams().userId;
+  const postId = useParams().postId;
 
   const [postData, setPostData] = useState<Post>();
   const [gameData, setGameData] = useState<Game>();
@@ -21,11 +22,11 @@ export default function PostDetail() {
   useEffect(() => {
     const fetchPostDetail = async () => {
       try {
-        const postRes = await getRecordById(Number(id));
+        const postRes = await getRecordById(Number(postId));
         if (postRes.status === 200) {
-          const gameRep = await getGameById(postRes.data.gameId);
-          if (gameRep.status === 200) {
-            setGameData(gameRep.data);
+          const gameRes = await getGameById(postRes.data.gameId);
+          if (gameRes.status === 200) {
+            setGameData(gameRes.data);
             setPostData(postRes.data);
           }
         }
@@ -35,7 +36,7 @@ export default function PostDetail() {
     };
 
     fetchPostDetail();
-  }, []);
+  }, [id]);
 
   return (
     // 헤더만큼 빼고 높이 설정을 해야 전체 스크롤이 안 생긴다. 왼쪽만 스크롤 있고 사진 영역은 스크롤 없도록.

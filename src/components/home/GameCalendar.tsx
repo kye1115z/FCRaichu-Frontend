@@ -126,14 +126,13 @@ export const GameCalendar = () => {
     const calendarApi = calendarRef.current?.getApi();
     if (!calendarApi) return;
 
-    const currentDate = calendarApi.getDate();
-    const actualYear = currentDate.getFullYear();
+    const actualCurrentYear = new Date().getFullYear();
 
-    // 현재 보고 있는 날짜가 올해 12월이면 그 이후로 못 가게 막음
-    if (
-      currentDate.getFullYear() >= actualYear &&
-      currentDate.getMonth() >= 11
-    ) {
+    const calendarDate = calendarApi.getDate();
+    const viewingYear = calendarDate.getFullYear();
+    const viewingMonth = calendarDate.getMonth();
+
+    if (viewingYear >= actualCurrentYear && viewingMonth >= 11) {
       return;
     }
 

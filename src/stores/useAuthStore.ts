@@ -26,19 +26,20 @@ export const useAuthStore = create<AuthState>()(
 
       //   상태 변경 함수
       // 로그인: 서버에서 받은 응답(data)을 스토어에 저장
-      setAuth: (data) =>
+      setAuth: (data: AuthResponse) => {
         set({
           user: {
-            id: data.id,
-            userId: data.userId,
-            nickname: data.nickname,
-            role: data.role,
-            points: data.points,
-            seasonTicket: data.seasonTicket,
+            id: data.user.id,
+            userId: data.user.userId,
+            nickname: data.user.nickname,
+            role: data.user.role,
+            points: data.user.points,
+            seasonTicket: data.user.seasonTicket,
           },
           accessToken: data.accessToken,
           tokenType: data.grantType,
-        }),
+        });
+      },
 
       // 로그아웃: 모든 인증 정보를 초기화
       logout: () =>
@@ -51,6 +52,3 @@ export const useAuthStore = create<AuthState>()(
     { name: "auth-storage" }, // 로컬 스토리지에 저장될 키 이름
   ),
 );
-function get() {
-  throw new Error("Function not implemented.");
-}

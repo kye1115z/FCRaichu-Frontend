@@ -6,22 +6,40 @@ import {
   type NavLinkRenderProps,
 } from "react-router-dom";
 import fcseoul_logo from "@/assets/fcseoul_logo.png";
+import { useEffect, useRef, useState } from "react";
+import { UserModal } from "../home/UserModal";
 
 export default function Header() {
   // 전역 store에서 user 가져오기 (콕 찝어서 가져와야 다른 상태가 바뀌었을 때 리렌더링 안 됨.)
   const { user } = useAuthStore();
   const location = useLocation();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const modalRef = useRef<HTMLDivElement>(null);
 
-  const headerBg =
-    location.pathname !== "/signup" ? "bg-background" : "bg-secondary";
-  const headerBorder =
-    location.pathname !== "/signup" ? "border-border" : "border-secondary";
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        modalRef.current &&
+        !modalRef.current.contains(event.target as Node)
+      ) {
+        setIsModalOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const isSpecialPage =
+    location.pathname === "/signup" || location.pathname === "/donation";
+
+  const headerBg = isSpecialPage ? "bg-secondary" : "bg-background";
+  const headerBorder = isSpecialPage ? "border-secondary" : "border-border";
 
   const navItemStyle = ({ isActive }: NavLinkRenderProps) =>
     `text-h4 transition-colors font-bold ${
       isActive
         ? "text-primary" // 내가 위치해 있는 nav라면
-        : location.pathname !== "/signup" // 내가 위치해 있는 헤더가 아닌데~~~
+        : !isSpecialPage // 내가 위치해 있는 헤더가 아닌데~~~
           ? "text-textMain hover:text-primary" // signup이 아니라면
           : "text-background hover:text-primary" // signup이라면
     }`;
@@ -64,10 +82,16 @@ export default function Header() {
           {user ? (
             <div className="flex items-center gap-2 text-textSub">
               <span className="text-body-sm">환영합니다,</span>
-              <button className="text-button-md text-primary cursor-pointer">
+              <button
+                className="text-button-md text-primary cursor-pointer"
+                onClick={() => setIsModalOpen(!isModalOpen)}
+              >
                 {user.nickname}
               </button>
               <button className="text-body-sm">님</button>
+              {isModalOpen && (
+                <UserModal user={user} setIsModalOpen={setIsModalOpen} />
+              )}
             </div>
           ) : (
             <div className="flex items-center gap-4 text-textSub">

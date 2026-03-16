@@ -1,4 +1,5 @@
 import { getAllGames } from "@/apis/games/gameApi";
+import { getMyAllRecords } from "@/apis/posts/postApi";
 import Typography from "@/styles/common/Typography";
 import { formatDate } from "@/utils/formatDate";
 import { useEffect, useState } from "react";
@@ -22,18 +23,27 @@ export default function DatePicker({ value, onChange }: Props) {
 
   // 경기 전체 일정 조회
   useEffect(() => {
-    const fetchGames = async () => {
+    const fetchGamesAndRecords = async () => {
       try {
-        const res = await getAllGames();
-        if (res.status === 200) {
-          // DONE: 오늘 경기를 기준으로 이전 경기만 보여주기
+        // 전체 경기와 내가 쓴 기록을 병렬로 호출해서 내가 이미 작성한 포스트라면? 경기 일자를 빼버리기
+        const [gameRes, postRes] = await Promise.all([
+          getAllGames(),
+          getMyAllRecords(), // 내가 이미 작성한 포스트 목록 가져오기
+        ]);
+
+        if (gameRes.status === 200) {
           const today = new Date();
           today.setHours(0, 0, 0, 0);
 
-          const filteredAndSorted = res.data
+          // 이미 기록이 있는 경기 ID들 추출
+          const writtenGameIds = postRes.data.map((post: any) => post.gameId);
+
+          const filteredAndSorted = gameRes.data
             .filter((game: Game) => {
               const gameDate = new Date(game.date);
-              return gameDate <= today; // 오늘을 포함해서 이전 날짜만 필터링함.
+              // DONE: 오늘 경기를 기준으로 이전 경기만 보여주기
+              // 내가 이미 썼던 경기(writtenGameIds)는 제외하기
+              return gameDate <= today && !writtenGameIds.includes(game.id);
             })
             .sort((a: Game, b: Game) => {
               // 최신순으로 정렬함
@@ -52,7 +62,7 @@ export default function DatePicker({ value, onChange }: Props) {
       }
     };
 
-    fetchGames();
+    fetchGamesAndRecords();
   }, []);
 
   const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {

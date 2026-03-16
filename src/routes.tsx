@@ -6,8 +6,6 @@ import SignUp from "./pages/signup/SignUp";
 import RecordWriteStep from "./components/post/RecordWriteStep";
 import Donation from "./pages/Donation";
 import { GamePicker } from "./components/post/GamePickerStep";
-import LandingLayout from "./layouts/LandingLayout";
-import IntroAnimation from "./components/landing/IntroAnimation";
 import PostWriteBaseLayout from "./layouts/PostBaseLayout";
 import { AllPosts } from "./components/post/AllPosts";
 import MyPostLayout from "./layouts/MyPostLayout";
@@ -15,16 +13,6 @@ import PostDetail from "./pages/PostDetail";
 
 // React Router 팀에서 권장하는 Data APIs & 객체 스타일 방식을 사용해 보았다.
 export const router = createBrowserRouter([
-  {
-    path: "/landing",
-    element: <LandingLayout />,
-    children: [
-      {
-        index: true,
-        element: <IntroAnimation />,
-      },
-    ],
-  },
   {
     path: "/",
     element: <RootLayout />, // 공통 레이아웃 적용

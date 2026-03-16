@@ -3,6 +3,7 @@ import type { Player } from "@/types/donation";
 import { postDonation } from "@/apis/player/player";
 import { useAuthStore } from "@/stores/useAuthStore";
 import "./SupportModal.css";
+import { getUserInfo } from "@/apis/auth/authApi";
 
 interface SupportModalProps {
   player: Player;
@@ -20,13 +21,16 @@ export default function SupportModal({ player, onClose }: SupportModalProps) {
 
     try {
       const res = await postDonation(player.id, supportPoints);
-      if (res.status === 200) {
+      if (res.status === 201) {
         if (user) {
           alert(
             `${player.name} 선수에게 ${supportPoints}포인트를 후원합니다! ❤️`,
           );
+          const userRes = await getUserInfo();
+          console.log(userRes.data.points);
           updateUser({
-            points: user.points - supportPoints,
+            ...user,
+            points: userRes.data.points,
           });
         }
       }

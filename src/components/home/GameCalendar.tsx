@@ -126,14 +126,13 @@ export const GameCalendar = () => {
     const calendarApi = calendarRef.current?.getApi();
     if (!calendarApi) return;
 
-    const currentDate = calendarApi.getDate();
-    const actualYear = currentDate.getFullYear();
+    const actualCurrentYear = new Date().getFullYear();
 
-    // 현재 보고 있는 날짜가 올해 12월이면 그 이후로 못 가게 막음
-    if (
-      currentDate.getFullYear() >= actualYear &&
-      currentDate.getMonth() >= 11
-    ) {
+    const calendarDate = calendarApi.getDate();
+    const viewingYear = calendarDate.getFullYear();
+    const viewingMonth = calendarDate.getMonth();
+
+    if (viewingYear >= actualCurrentYear && viewingMonth >= 11) {
       return;
     }
 
@@ -288,6 +287,7 @@ export const GameCalendar = () => {
         eventContent={(arg) => {
           const gameData = arg.event.extendedProps;
           const isFuture = new Date(arg.event.startStr) > new Date();
+          const isAttended = gameData.isAttended;
 
           {
             /* DONE: gameData.opponent 에 맞춰서 맞는 로고 넣기 */
@@ -300,7 +300,12 @@ export const GameCalendar = () => {
             // DONE: 오늘 날짜 이후는 클릭 방지
             <div
               className={`flex flex-col items-center justify-center w-full 
-                transition-transform ${isFuture ? "cursor-default grayscale" : "cursor-pointer hover:scale-105"}`}
+                transition-transform ${
+                  // 미래 경기이거나 이미 기록한 경기면 커서만 기본으로 변경
+                  isFuture || isAttended
+                    ? "cursor-default"
+                    : "cursor-pointer hover:scale-105"
+                }`}
             >
               {opponentTeam ? (
                 <img
@@ -329,12 +334,18 @@ export const GameCalendar = () => {
           // DONE: 오늘 날짜 이후는 클릭 방지
           const eventDate = new Date(info.event.startStr);
           const today = new Date();
+          const isAttended = info.event.extendedProps.isAttended;
 
           today.setHours(0, 0, 0, 0);
           eventDate.setHours(0, 0, 0, 0);
 
           if (eventDate > today) {
             alert("미래 경기는 아직 기록할 수 없습니다.");
+            return;
+          }
+
+          // 이미 기록한 경기면 선택도 못하게 해.
+          if (isAttended) {
             return;
           }
 

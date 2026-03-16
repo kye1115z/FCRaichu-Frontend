@@ -40,6 +40,12 @@ export const getLogin = async (data: LoginRequest) => {
   return userRes.data;
 };
 
+// 유저 정보 받아오기
+export const getUserInfo = async () => {
+  const userRes = await api.get(`/api/users/me`);
+  return userRes;
+};
+
 // 회원가입 로직
 export const postSingUp = async (data: SignUpRequest) => {
   const res = await api.post(`/api/users/join`, data);

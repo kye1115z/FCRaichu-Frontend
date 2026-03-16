@@ -13,10 +13,11 @@ import { useNavigate, useParams } from "react-router-dom"; // react-router-dom �
 import { FiEdit } from "react-icons/fi";
 import { MdOutlineDeleteForever } from "react-icons/md";
 import { useAuthStore } from "@/stores/useAuthStore";
+import { getUserInfo } from "@/apis/auth/authApi";
 
 export default function PostDetail() {
   const navigate = useNavigate();
-  const { user } = useAuthStore();
+  const { user, updateUser } = useAuthStore();
   const { userId, postId } = useParams();
 
   const [postData, setPostData] = useState<Post>();
@@ -51,6 +52,14 @@ export default function PostDetail() {
       if (res.status === 204) {
         alert("삭제되었습니다.");
         navigate(-1);
+
+        const userRes = await getUserInfo();
+        if (userRes.status === 200) {
+          updateUser({
+            ...user,
+            points: userRes.data.points,
+          });
+        }
       }
     } catch (e) {
       console.error("삭제 실패:", e);

@@ -56,8 +56,11 @@ export default function Header() {
 
           <ul className="flex items-center gap-8">
             <li>
-              <NavLink to="/" className={navItemStyle}>
-                My FC Seoul
+              <NavLink
+                to="/"
+                className={`${navItemStyle} italic text-primary text-xl`}
+              >
+                MY FC SEOUL
               </NavLink>
             </li>
             <li>

@@ -1,4 +1,4 @@
-import { getGames } from "@/apis/games/gameApi";
+import { getAllGames } from "@/apis/games/gameApi";
 import { getMyAllRecords } from "@/apis/posts/postApi";
 import { useAuthStore } from "@/stores/useAuthStore";
 import Typography from "@/styles/common/Typography";
@@ -20,7 +20,7 @@ export const MyRecords = () => {
       try {
         const [recordsRes, gameRes] = await Promise.all([
           getMyAllRecords(),
-          getGames(),
+          getAllGames(),
         ]);
 
         if (recordsRes.status === 200 && gameRes.status === 200) {

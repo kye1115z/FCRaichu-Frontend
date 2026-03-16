@@ -26,11 +26,21 @@ export const GameCalendar = () => {
   // ------------ 날짜 넘길 때 필요한 상태와 Ref
   const calendarRef = useRef<FullCalendar>(null);
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
-  const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
+  const [currentMonth, setCurrentMonth] = useState(new Date().getMonth() + 1);
 
   // ------------ 경기 일정 데이터 받아오기
   useEffect(() => {
     const fetchGamesData = async () => {
+      // year나 month가 유효하지 않으면 실행 중단
+      if (
+        !currentYear ||
+        !currentMonth ||
+        isNaN(currentYear) ||
+        isNaN(currentMonth)
+      ) {
+        return;
+      }
+
       try {
         const fetchFn = loggedIn ? getGames : getGuestGames;
         const res = await fetchFn(currentYear, currentMonth);
@@ -44,7 +54,7 @@ export const GameCalendar = () => {
     };
 
     fetchGamesData();
-  }, [currentYear, currentMonth]);
+  }, [currentYear, currentMonth, loggedIn]);
 
   // 캘린더에 입력할 데이터로 변환
   const events = games.map((game) => {
@@ -66,8 +76,15 @@ export const GameCalendar = () => {
     const calendarApi = calendarRef.current?.getApi();
     if (calendarApi) {
       const currentDate = calendarApi.getDate();
-      setCurrentYear(currentDate.getFullYear());
-      setCurrentMonth(currentDate.getMonth() + 1);
+
+      const newYear = currentDate.getFullYear();
+      const newMonth = currentDate.getMonth() + 1;
+
+      // 값이 정상일 때만 업데이트
+      if (newYear && newMonth) {
+        setCurrentYear(newYear);
+        setCurrentMonth(newMonth);
+      }
     }
   };
 
@@ -92,10 +109,10 @@ export const GameCalendar = () => {
     goToDate(currentYear, newMonth);
   };
 
-  // 컴포넌트 마운트 시 헤더 날짜 초기화
-  useEffect(() => {
-    setTimeout(updateHeaderDate, 0);
-  }, []);
+  // // 컴포넌트 마운트 시 헤더 날짜 초기화
+  // useEffect(() => {
+  //   setTimeout(updateHeaderDate, 0);
+  // }, []);
 
   // 이전으로
   const handlePrev = () => {

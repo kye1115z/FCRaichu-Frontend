@@ -2,77 +2,68 @@ import { getGameById } from "@/apis/games/gameApi";
 import { deleteMyRecord, getRecordById } from "@/apis/posts/postApi";
 import ImageSlider from "@/components/postDetail/ImageSlider";
 import MatchInfo from "@/components/postDetail/MatchInfo";
+import { useAuthStore } from "@/stores/useAuthStore";
 import Typography from "@/styles/common/Typography";
-import type { Game } from "@/types/game";
-import type { Post } from "@/types/post";
 import { formatDate } from "@/utils/formatDate";
-import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom"; // react-router-dom 사용 시
-
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { FiEdit } from "react-icons/fi";
 import { MdOutlineDeleteForever } from "react-icons/md";
-import { useAuthStore } from "@/stores/useAuthStore";
-import { getUserInfo } from "@/apis/auth/authApi";
+import { useNavigate, useParams } from "react-router-dom";
 
 export default function PostDetail() {
   const navigate = useNavigate();
-  const { user, updateUser } = useAuthStore();
-  const { userId, postId } = useParams();
+  const { user } = useAuthStore();
+  const { userId, postId } = useParams<{ userId: string; postId: string }>();
+  const queryClient = useQueryClient();
 
-  const [postData, setPostData] = useState<Post>();
-  const [gameData, setGameData] = useState<Game>();
+  // 1. Post 데이터 가져오기
+  const { data: postData, isLoading: isPostLoading } = useQuery({
+    queryKey: ["post", postId],
+    queryFn: () => getRecordById(Number(postId)),
+    enabled: !!postId,
+    staleTime: 1000 * 60 * 5,
+  });
 
-  // post detail 불러오고 그 안에 있는 gameId 데이터로 game 정보까지 불러오기
-  useEffect(() => {
-    const fetchPostDetail = async () => {
-      try {
-        const postRes = await getRecordById(Number(postId));
-        if (postRes.status === 200) {
-          const gameRes = await getGameById(postRes.data.gameId);
-          if (gameRes.status === 200) {
-            setGameData(gameRes.data);
-            setPostData(postRes.data);
-          }
-        }
-      } catch (e) {
-        console.log(e);
-      }
-    };
+  // 2. Post 데이터를 기반으로 Game 데이터 가져오기 (Dependent Query)
+  const { data: gameData, isLoading: isGameLoading } = useQuery({
+    queryKey: ["game", postData?.gameId],
+    queryFn: () => getGameById(postData.gameId),
+    enabled: !!postData?.gameId, // postData.gameId가 있을 때만 실행
+    staleTime: 1000 * 60 * 60 * 2,
+  });
 
-    fetchPostDetail();
-  }, [userId]);
+  // 3. 삭제 Mutation
+  const { mutate: deletePost } = useMutation({
+    mutationFn: () => deleteMyRecord(Number(postId)),
+    onSuccess: () => {
+      alert("삭제되었습니다.");
+      // 쿼리를 무효화하여 목록을 업데이트
+      queryClient.invalidateQueries({ queryKey: ["myPosts", Number(userId)] }); // 내 포스트 목록 갱신
+      queryClient.invalidateQueries({ queryKey: ["ranking"] }); // 랭킹 전체 갱신
+      navigate(-1);
+    },
+    onError: () => {
+      alert("삭제에 실패했습니다.");
+    },
+  });
 
-  // 삭제
-  const handleDelete = async () => {
-    if (!window.confirm("정말로 이 게시물을 삭제하시겠습니까?")) return;
-
-    try {
-      const res = await deleteMyRecord(Number(postId));
-      if (res.status === 204) {
-        alert("삭제되었습니다.");
-        navigate(-1);
-
-        const userRes = await getUserInfo();
-        if (userRes.status === 200) {
-          updateUser({
-            ...user,
-            points: userRes.data.points,
-          });
-        }
-      }
-    } catch (e) {
-      console.error("삭제 실패:", e);
+  // 삭제 핸들러
+  const handleDelete = () => {
+    if (window.confirm("정말로 이 게시물을 삭제하시겠습니까?")) {
+      deletePost();
     }
   };
 
-  // 수정
+  // 수정 핸들러
   const handleEdit = () => {
     navigate(`/post/edit/${postId}`, { state: { postData } });
   };
 
+  if (isPostLoading || isGameLoading) {
+    return <div>Loading...</div>;
+  }
+
   return (
-    // 헤더만큼 빼고 높이 설정을 해야 전체 스크롤이 안 생긴다. 왼쪽만 스크롤 있고 사진 영역은 스크롤 없도록.
-    // (이때까지는 왼쪽 영역은 모두 다 스크롤 됨. 근데 나는 본문만 스크롤 되게끔 하려고 한다.)
     <div className="flex w-full h-[calc(100vh-64px)] bg-card overflow-hidden">
       <div className="w-1/2 h-full flex flex-col px-16 py-10 overflow-hidden">
         {/* 상단 경기 정보는 스크롤 없이 "고정"!! */}

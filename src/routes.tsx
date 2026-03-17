@@ -41,13 +41,6 @@ export const router = createBrowserRouter([
           { path: "detail/:postId", element: <PostDetail /> },
         ],
       },
-
-      //   나중에 데이터 페칭이 필요한 컴포넌s트는 아래의 방식으로 불러오기
-      //   {
-      //     path: "example/:id",
-      //     element: <Example />,
-      //     loader: exampleLoader,
-      //   }
     ],
   },
 ]);

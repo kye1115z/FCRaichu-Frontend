@@ -5,36 +5,25 @@ import {
 import { useAuthStore } from "@/stores/useAuthStore";
 import Typography from "@/styles/common/Typography";
 import type { RankingUser } from "@/types/ranking";
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 
 export const Ranking = () => {
   const { user } = useAuthStore();
   const myNickname = user?.nickname;
-  const [rankingData, setRankingData] = useState<{
-    attendanceRank: RankingUser[];
-    winRateRank: RankingUser[];
-  }>({
-    attendanceRank: [],
-    winRateRank: [],
+
+  const { data: attendanceRank = [] } = useQuery<RankingUser[]>({
+    queryKey: ["ranking", "attendance"],
+    queryFn: getAttendanceRanking,
+    staleTime: 1000 * 30,
+    gcTime: 1000 * 60 * 5,
   });
 
-  useEffect(() => {
-    const fetchRankingList = async () => {
-      try {
-        const [attendanceRes, winRateRes] = await Promise.all([
-          getAttendanceRanking(),
-          getWinRateRanking(),
-        ]);
-        setRankingData({
-          attendanceRank: attendanceRes,
-          winRateRank: winRateRes,
-        });
-      } catch (e) {
-        console.error(e);
-      }
-    };
-    fetchRankingList();
-  }, []);
+  const { data: winRateRank = [] } = useQuery<RankingUser[]>({
+    queryKey: ["ranking", "winRate"],
+    queryFn: getWinRateRanking,
+    staleTime: 1000 * 30,
+    gcTime: 1000 * 60 * 5,
+  });
 
   // 공통 랭킹 아이템 컴포넌트
   const RankingItem = ({
@@ -116,8 +105,8 @@ export const Ranking = () => {
             </Typography>
           </div>
           <div className="flex flex-col gap-4">
-            {rankingData.attendanceRank.length > 0 ? (
-              rankingData.attendanceRank.map((item) => (
+            {attendanceRank.length > 0 ? (
+              attendanceRank.map((item) => (
                 <RankingItem
                   key={`attendance-${item.rank}-${item.nickname}`}
                   item={item}
@@ -138,8 +127,8 @@ export const Ranking = () => {
             </Typography>
           </div>
           <div className="flex flex-col gap-4">
-            {rankingData.winRateRank.length > 0 ? (
-              rankingData.winRateRank.map((item) => (
+            {winRateRank.length > 0 ? (
+              winRateRank.map((item) => (
                 <RankingItem
                   key={`win-${item.rank}-${item.nickname}`}
                   item={item}

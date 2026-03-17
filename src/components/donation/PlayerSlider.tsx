@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay } from "swiper/modules";
 import type { Player } from "@/types/donation";
@@ -7,6 +7,7 @@ import SupportModal from "./SupportModal";
 // Swiper 필수 스타일
 import "swiper/swiper-bundle.css";
 import { getAllActivePlayers } from "@/apis/player/player";
+import { useQuery } from "@tanstack/react-query";
 
 // 컨베이어 벨트처럼 흐르게 만드는 CSS
 const swiperStyle = `
@@ -16,23 +17,14 @@ const swiperStyle = `
 `;
 
 export default function PlayerSlider() {
-  const [players, setPlayers] = useState<Player[]>([]);
   const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
 
-  useEffect(() => {
-    const fetchPlayer = async () => {
-      try {
-        const res = await getAllActivePlayers();
-        if (res.status === 200) {
-          setPlayers(res.data);
-        }
-      } catch (e) {
-        console.log(e);
-      }
-    };
-
-    fetchPlayer();
-  }, []);
+  const { data: players = [] } = useQuery<Player[]>({
+    queryKey: ["activePlayers"],
+    queryFn: getAllActivePlayers,
+    staleTime: 1000 * 60 * 60,
+    gcTime: 1000 * 60 * 60 * 2,
+  });
 
   return (
     <div className="w-full py-10">

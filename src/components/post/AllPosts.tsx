@@ -6,59 +6,33 @@
 
 // 뷰포트 상단에 월별 첫 사진이 걸릴 때 연도 업데이트.
 
-import { getMyAllRecords } from "@/apis/posts/postApi";
+import { getMyAllPosts } from "@/apis/posts/postApi";
 import Typography from "@/styles/common/Typography";
 import type { Post } from "@/types/post";
 import { useEffect, useMemo, useRef, useState } from "react";
 import AllPostsImages from "./AllPostsImages";
 import ReactECharts from "echarts-for-react";
 import { calcStats } from "@/utils/caclStats";
+import { useQuery } from "@tanstack/react-query";
+import { useParams } from "react-router-dom";
 
 export const AllPosts = () => {
-  const [posts, setPosts] = useState<Post[]>([]);
-  const [myData, setMyData] = useState({
-    win: 0,
-    draw: 0,
-    lose: 0,
-    count: 0,
-    rate: {
-      winRate: 33.5,
-      drawRate: 33.5,
-      loseRate: 33,
-    },
-  });
-  const [gameDate, setGameDate] = useState<string[]>([]);
+  const { userId } = useParams<{ userId: string }>();
   const [currentYear, setCurrentYear] = useState(
     new Date().getFullYear().toString(),
   );
   const observer = useRef<IntersectionObserver | null>(null); // 스크롤 감지
 
-  // 데이터 불러오는 useEffect
-  useEffect(() => {
-    const fetchPosts = async () => {
-      try {
-        const res = await getMyAllRecords();
-        if (res.status === 200) {
-          setPosts(res.data.posts);
-          const dates = res.data.posts.map((p: Post) => p.gameDate);
+  const { data, isLoading } = useQuery({
+    queryKey: ["userPosts", userId],
+    queryFn: () => getMyAllPosts(),
+    enabled: !!userId,
+    staleTime: 1000 * 60 * 2,
+    gcTime: 1000 * 60 * 10,
+  });
 
-          setPosts(res.data.posts);
-          setGameDate(dates);
-          setMyData({
-            win: res.data.win,
-            draw: res.data.draw,
-            lose: res.data.lose,
-            count: res.data.count,
-            rate: calcStats(res.data.win, res.data.draw, res.data.lose),
-          });
-        }
-      } catch (e) {
-        console.error(e);
-      }
-    };
-
-    fetchPosts();
-  }, []);
+  const { posts = [], win = 0, draw = 0, lose = 0, count = 0 } = data || {};
+  const rate = useMemo(() => calcStats(win, draw, lose), [win, draw, lose]);
 
   // DONE: 스크롤 할 때 같은 줄에 여러 연도가 함께 있으면 25, 26 아주 정신을 못 차리는 에러 발생.
   // 섹션을 감지하는 로직
@@ -112,10 +86,10 @@ export const AllPosts = () => {
   const groupedPosts = useMemo(() => {
     if (!posts.length) return {};
 
-    return posts.reduce(
-      (acc, post, idx) => {
+    return (posts as Post[]).reduce(
+      (acc, post) => {
         // gameDate 날짜 가져오기
-        const dateStr = gameDate[idx] || post.gameDate;
+        const dateStr = post.gameDate;
 
         if (!dateStr) return acc;
 
@@ -134,7 +108,7 @@ export const AllPosts = () => {
       },
       {} as Record<string, Post[]>,
     );
-  }, [posts, gameDate]);
+  }, [posts]);
 
   const sortedKeys = Object.keys(groupedPosts).sort().reverse(); // 최신순으로 정렬하기
 
@@ -162,13 +136,17 @@ export const AllPosts = () => {
           label: { show: false },
         },
         data: [
-          { value: myData.win, name: "승리" },
-          { value: myData.draw, name: "무승부" },
-          { value: myData.lose, name: "패배" },
+          { value: win, name: "승리" },
+          { value: draw, name: "무승부" },
+          { value: lose, name: "패배" },
         ],
       },
     ],
   };
+
+  if (isLoading) {
+    return <div>Loading...</div>; // Or a spinner component
+  }
 
   return (
     <>
@@ -198,7 +176,7 @@ export const AllPosts = () => {
               />
               <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
                 <span className="text-xl font-black text-secondary">
-                  {myData.count}
+                  {count}
                 </span>
                 <span className="text-[10px] font-bold text-gray-400 uppercase">
                   경기
@@ -212,24 +190,22 @@ export const AllPosts = () => {
                 className="font-bold! text-gray-400 mb-1"
               >
                 전체 승률{" "}
-                <span className="text-primary ml-1">
-                  {myData.rate.winRate}%
-                </span>
+                <span className="text-primary ml-1">{rate.winRate}%</span>
               </Typography>
               <div className="flex gap-4">
                 <StatBadge
                   label="승"
-                  value={myData.rate.winRate.toString()}
+                  value={rate.winRate.toString()}
                   color="bg-[#0046FF]"
                 />
                 <StatBadge
                   label="무"
-                  value={myData.rate.drawRate.toString()}
+                  value={rate.drawRate.toString()}
                   color="bg-gray-300"
                 />
                 <StatBadge
                   label="패"
-                  value={myData.rate.loseRate.toString()}
+                  value={rate.loseRate.toString()}
                   color="bg-[#D91920]"
                 />
               </div>

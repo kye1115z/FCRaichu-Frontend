@@ -1,10 +1,10 @@
 import type { PostRequest } from "@/types/post";
 import { api } from "../axiosInstance";
 
-// 직관 기록 전체 조회
-export const getMyAllRecords = async () => {
+// 내 직관 기록 전체 조회
+export const getMyAllPosts = async () => {
   const res = await api.get(`/api/posts`);
-  return res;
+  return res.data;
 };
 
 // 직관 기록 작성
@@ -25,13 +25,13 @@ export const postMyRecord = async (data: PostRequest) => {
       "Content-Type": "multipart/form-data",
     },
   });
-  return res;
+  return res.data;
 };
 
 // 특정 게시물 상세 조회
 export const getRecordById = async (id: number) => {
   const res = await api.get(`/api/posts/${id}`);
-  return res;
+  return res.data;
 };
 
 // 직관 기록 수정
@@ -55,11 +55,11 @@ export const putMyRecord = async (postId: number, data: any) => {
       "Content-Type": "multipart/form-data",
     },
   });
-  return res;
+  return res.data;
 };
 
 // 직관 기록 삭제
 export const deleteMyRecord = async (id: number) => {
   const res = await api.delete(`/api/posts/${id}`);
-  return res;
+  return res.data;
 };

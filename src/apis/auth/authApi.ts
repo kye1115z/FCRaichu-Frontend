@@ -13,7 +13,7 @@ import { useAuthStore } from "@/stores/useAuthStore";
 // Keycloak에서 토큰을 받아오는 내부 함수
 export const getLogin = async (data: LoginRequest) => {
   const params = new URLSearchParams();
-  params.append("client_id", "react");
+  params.append("client_id", "test-client");
   params.append("username", data.userId);
   params.append("password", data.password);
   params.append("grant_type", "password");

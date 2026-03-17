@@ -1,5 +1,5 @@
 import { getAllGames } from "@/apis/games/gameApi";
-import { getMyAllRecords } from "@/apis/posts/postApi";
+import { getMyAllPosts } from "@/apis/posts/postApi";
 import Typography from "@/styles/common/Typography";
 import { formatDate } from "@/utils/formatDate";
 import { useEffect, useState } from "react";
@@ -35,7 +35,7 @@ export default function DatePicker({
         // 전체 경기와 내가 쓴 기록을 병렬로 호출해서 내가 이미 작성한 포스트라면? 경기 일자를 빼버리기
         const [gameRes, postRes] = await Promise.all([
           getAllGames(),
-          getMyAllRecords(), // 내가 이미 작성한 포스트 목록 가져오기
+          getMyAllPosts(), // 내가 이미 작성한 포스트 목록 가져오기
         ]);
 
         if (gameRes.status === 200) {

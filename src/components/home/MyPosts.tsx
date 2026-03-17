@@ -1,63 +1,52 @@
 import { getAllGames } from "@/apis/games/gameApi";
-import { getMyAllRecords } from "@/apis/posts/postApi";
+import { getMyAllPosts } from "@/apis/posts/postApi";
 import { useAuthStore } from "@/stores/useAuthStore";
 import Typography from "@/styles/common/Typography";
 import type { Game } from "@/types/game";
 import type { Post } from "@/types/post";
 import { formatDate } from "@/utils/formatDate";
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 
 export const MyRecords = () => {
   const { user } = useAuthStore();
   const navigate = useNavigate();
-  const [records, setRecords] = useState<Post[]>([]);
 
-  useEffect(() => {
-    // 로그인 상태가 아니면 데이터 요청하지 않기!!
-    if (!user) return;
+  const { data: recordsData } = useQuery<{ posts: Post[] }>({
+    queryKey: ["myPosts", user?.id],
+    queryFn: getMyAllPosts,
+    enabled: !!user,
+    staleTime: 1000 * 60,
+    gcTime: 1000 * 60 * 5,
+  });
 
-    // 두 가지 데이터 요청을 동시에 요청해야 함. (getMyRecords, getGames)
-    // Promise.all 사용!
-    const fetchData = async () => {
-      try {
-        const [recordsRes, gameRes] = await Promise.all([
-          getMyAllRecords(),
-          getAllGames(),
-        ]);
+  const { data: gamesData } = useQuery<Game[]>({
+    queryKey: ["allGames"],
+    queryFn: getAllGames,
+    enabled: !!user,
+    staleTime: 1000 * 60 * 60 * 2,
+  });
 
-        if (recordsRes.status === 200 && gameRes.status === 200) {
-          const recordsData = recordsRes.data.posts;
-          const gamesData = gameRes.data;
+  const records = useMemo(() => {
+    if (!recordsData || !gamesData) return [];
 
-          // Games를 Map으로 변환 (빠르게 색인하기 위해서)
-          const gameMap = new Map(
-            gamesData.map((game: Game) => [Number(game.id), game]),
-          );
-          // Record와 Game 데이터를 합치기 (날짜 최신순으로)
-          const mergedRecords = recordsData
-            .map((record: Post) => ({
-              ...record,
-              game: gameMap.get(Number(record.gameId)) || {},
-            }))
-            .sort(
-              (
-                a: { createdAt: string | number | Date },
-                b: { createdAt: string | number | Date },
-              ) =>
-                new Date(b.createdAt).getTime() -
-                new Date(a.createdAt).getTime(),
-            );
+    const gamesMap = new Map(gamesData.map((game) => [Number(game.id), game]));
 
-          setRecords(mergedRecords.slice(0, 2));
-        }
-      } catch (e) {
-        console.log(e);
-      }
-    };
+    const mergedRecords = recordsData.posts
+      .map((record: Post) => ({
+        ...record,
+        game: gamesMap.get(Number(record.gameId)),
+      }))
+      .sort(
+        (
+          a: { createdAt: string | number | Date },
+          b: { createdAt: string | number | Date },
+        ) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+      );
 
-    fetchData();
-  }, [user]);
+    return mergedRecords.slice(0, 2);
+  }, [recordsData, gamesData]);
 
   const handleLoginRedirect = () => {
     navigate("/login");

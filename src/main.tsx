@@ -5,8 +5,7 @@ import { RouterProvider } from "react-router-dom";
 import { router } from "./routes.tsx";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-
-const queryClient = new QueryClient();
+import { queryClient } from "./QueryClient.ts";
 
 // MSW 활성화 함수 정의
 async function enableMocking() {

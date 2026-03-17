@@ -10,6 +10,8 @@ import PostWriteBaseLayout from "./layouts/PostBaseLayout";
 import { AllPosts } from "./components/post/AllPosts";
 import MyPostLayout from "./layouts/MyPostLayout";
 import PostDetail from "./pages/PostDetail";
+import { playersLoader } from "./apis/player/player";
+import { queryClient } from "./QueryClient";
 
 // React Router 팀에서 권장하는 Data APIs & 객체 스타일 방식을 사용해 보았다.
 export const router = createBrowserRouter([
@@ -23,7 +25,12 @@ export const router = createBrowserRouter([
       },
       { path: "login", element: <Login /> },
       { path: "signup", element: <SignUp /> },
-      { path: "donation", element: <Donation /> },
+      {
+        path: "donation",
+        element: <Donation />,
+        // 함수를 실행해서 queryClient를 주입한 뒤, loader로 등록.
+        loader: playersLoader(queryClient),
+      },
       {
         path: "post",
         element: <PostWriteBaseLayout />,

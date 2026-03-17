@@ -66,10 +66,8 @@ export default function PostWriteBaseLayout() {
     const fetchOriginalPost = async () => {
       try {
         const res = await getRecordById(Number(postId));
-        if (res.status === 200) {
-          setInitialData(res.data);
-          setSelectedGameId(res.data.gameId);
-        }
+        setInitialData(res);
+        setSelectedGameId(res.gameId);
       } catch (e) {
         console.error("원본 포스트 로드 실패:", e);
       } finally {

@@ -18,22 +18,18 @@ export const NicknameEditModal = ({ currentNickname, onClose }: Props) => {
   const hasWhitespace = /\s/.test(newNickname);
 
   const isDisabled =
-    !trimmedNickname ||
-    trimmedNickname === currentNickname ||
-    hasWhitespace;
+    !trimmedNickname || trimmedNickname === currentNickname || hasWhitespace;
 
   const handleUpdate = async () => {
     if (isDisabled) return;
 
     try {
-      const res = await patchNickname(trimmedNickname);
-      if (res.status === 200) {
-        if (user) {
-          updateUser({ nickname: trimmedNickname });
-        }
-        alert("닉네임이 변경되었습니다.");
-        onClose();
+      await patchNickname(trimmedNickname);
+      if (user) {
+        updateUser({ nickname: trimmedNickname });
       }
+      alert("닉네임이 변경되었습니다.");
+      onClose();
     } catch (e) {
       alert("변경에 실패했습니다.");
     }

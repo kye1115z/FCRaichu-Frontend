@@ -3,6 +3,7 @@ import { useAuthStore } from "@/stores/useAuthStore";
 import type { PostRequest } from "@/types/post";
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate, useOutletContext, useParams } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query"; // 캐시 무효화를 위해 추가
 import { TbPhotoPlus } from "react-icons/tb";
 import { PiSmileyFill } from "react-icons/pi";
 import { LuFilePen } from "react-icons/lu";
@@ -27,6 +28,7 @@ interface EditPostInitialData {
 // DONE: 날짜 데이터를 어떻게 받아올지 -> useOutletContext 사용
 export default function RecordWriteStep() {
   const navigate = useNavigate();
+  const queryClient = useQueryClient(); // 캐시 관리용 클라이언트
   const { user } = useAuthStore();
   const { postId } = useParams();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -36,11 +38,10 @@ export default function RecordWriteStep() {
   const context = useOutletContext<PostContext>() || {};
   const { selectedGameId, initialData, isEditMode } = context;
 
-
   // 직관 기록 post 시 보낼 데이터 정의 (근데 이제 수정 모드를 반영함)
   const [formData, setFormData] = useState({
-    title: isEditMode ? initialData.title : "",
-    content: isEditMode ? initialData.content : "",
+    title: isEditMode && initialData ? initialData.title : "",
+    content: isEditMode && initialData ? initialData.content : "",
   });
 
   const trimmedTitle = formData.title.trim();
@@ -89,7 +90,7 @@ export default function RecordWriteStep() {
 
   // 이미지 상태 관리 (서버에 저장된 기존 이미지 URL) -> 수정 모드일 때
   const [existingImages, setExistingImages] = useState<string[]>(
-    isEditMode ? initialData.images || [] : [],
+    isEditMode && initialData ? initialData.images || [] : [],
   );
 
   const [imageFiles, setImageFiles] = useState<File[]>([]);
@@ -140,23 +141,8 @@ export default function RecordWriteStep() {
 
     const processedFiles: File[] = [];
 
-    // 지우기!!
-    console.log(
-      processedFiles.map((file) => ({
-        name: file.name,
-        type: file.type,
-        size: file.size,
-      })),
-    );
-
     for (const file of filesToProcess) {
       try {
-        console.log("선택 파일 정보", {
-          name: file.name,
-          type: file.type,
-          size: file.size,
-        });
-
         if (await isHeicFile(file)) {
           const converted = await convertHeicToJpegFile(file);
           processedFiles.push(converted);
@@ -202,9 +188,8 @@ export default function RecordWriteStep() {
     if (!selectedGameId) return alert("경기를 선택해주세요.");
 
     try {
-      let res;
       if (isEditMode) {
-        res = await putMyRecord(Number(postId), {
+        await putMyRecord(Number(postId), {
           ...formData,
           title: trimmedTitle,
           content: trimmedContent,
@@ -213,7 +198,7 @@ export default function RecordWriteStep() {
           images: imageFiles,
         });
       } else {
-        res = await postMyRecord({
+        await postMyRecord({
           ...formData,
           title: trimmedTitle,
           content: trimmedContent,
@@ -223,12 +208,15 @@ export default function RecordWriteStep() {
         } as PostRequest);
       }
 
-      if (res.status === 201 || res.status === 200) {
-        alert(
-          isEditMode ? "수정이 완료되었습니다." : "직관 기록이 완료되었습니다.",
-        );
-        navigate(`/post/${user?.id}/all`);
-      }
+      // 캐시 날리고 최신 데이터 불러오기
+      await queryClient.invalidateQueries({ queryKey: ["myPosts"] });
+      await queryClient.invalidateQueries({ queryKey: ["allPosts", user?.id] });
+      await queryClient.invalidateQueries({ queryKey: ["post", postId] });
+
+      alert(
+        isEditMode ? "수정이 완료되었습니다." : "직관 기록이 완료되었습니다.",
+      );
+      navigate(`/post/${user?.id}/all`);
     } catch (e) {
       console.error(e);
     }
@@ -369,7 +357,6 @@ export default function RecordWriteStep() {
                   </button>
                 </div>
               ))}
-              {/* 남은 슬롯 표시 (디자인용) */}
               {Array.from({
                 length: 4 - (existingImages.length + imageFiles.length),
               }).map((_, i) => (

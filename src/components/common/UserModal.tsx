@@ -15,12 +15,10 @@ export const UserModal = ({ user, setIsModalOpen }: Props) => {
   useEffect(() => {
     const fetchUser = async () => {
       const res = await getUserInfo();
-      if (res.status == 200) {
-        updateUser({
-          ...user,
-          points: res.data.points,
-        });
-      }
+      updateUser({
+        ...user,
+        points: res.data.points,
+      });
     };
 
     fetchUser();

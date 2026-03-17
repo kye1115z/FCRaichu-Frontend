@@ -114,7 +114,6 @@ export const AllPosts = () => {
 
   // 도넛 차트 옵션
   const chartOption = {
-    // 승(블루), 무(그레이), 패(레드) 순서
     color: ["#0046FF", "#D1D5DB", "#D91920"],
     tooltip: {
       trigger: "item",

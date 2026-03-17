@@ -331,8 +331,6 @@ export const GameCalendar = () => {
           if (isAttended) {
             return;
           }
-
-          console.log("경기 클릭:", info.event.extendedProps);
           // DONE: 클릭된 경기 id를 가지고 페이지 이동
           navigate("/post", { state: { gameId: info.event.id } });
         }}

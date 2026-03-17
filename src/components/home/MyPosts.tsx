@@ -27,7 +27,7 @@ export const MyRecords = () => {
         ]);
 
         if (recordsRes.status === 200 && gameRes.status === 200) {
-          const recordsData = recordsRes.data;
+          const recordsData = recordsRes.data.posts;
           const gamesData = gameRes.data;
 
           // Games를 Map으로 변환 (빠르게 색인하기 위해서)

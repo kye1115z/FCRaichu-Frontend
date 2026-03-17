@@ -43,7 +43,9 @@ export default function DatePicker({
           today.setHours(0, 0, 0, 0);
 
           // 이미 기록이 있는 경기 ID들 추출
-          const writtenGameIds = postRes.data.map((post: any) => post.gameId);
+          const writtenGameIds = postRes.data.posts.map(
+            (post: any) => post.gameId,
+          );
 
           const filteredAndSorted = gameRes.data
             .filter((game: Game) => {

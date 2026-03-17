@@ -47,7 +47,7 @@ export default function Login() {
             로그인
           </Typography>
           <Typography variant="h4" color="text-disabledGray">
-            FC라이츄 회원 로그인
+            My Fc Seoul 회원 로그인
           </Typography>
         </div>
 

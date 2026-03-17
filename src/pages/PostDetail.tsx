@@ -1,4 +1,3 @@
-// src/pages/DetailPostPage.tsx
 import { getGameById } from "@/apis/games/gameApi";
 import { deleteMyRecord, getRecordById } from "@/apis/posts/postApi";
 import ImageSlider from "@/components/postDetail/ImageSlider";

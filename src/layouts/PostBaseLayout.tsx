@@ -106,7 +106,12 @@ export default function PostWriteBaseLayout() {
       />
 
       {/* DONE: 날짜 선택 컴포넌트 */}
-      <DatePicker value={selectedGameId} onChange={setSelectedGameId} />
+      <DatePicker
+        value={selectedGameId}
+        onChange={setSelectedGameId}
+        isEditMode={isEditMode}
+        initialGameId={initialData?.gameId}
+      />
 
       {/* context로 하위 단계 컴포넌트들에 데이터 전달 */}
       <Outlet

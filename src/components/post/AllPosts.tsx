@@ -9,11 +9,25 @@
 import { getMyAllRecords } from "@/apis/posts/postApi";
 import Typography from "@/styles/common/Typography";
 import type { Post } from "@/types/post";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import AllPostsImages from "./AllPostsImages";
+import ReactECharts from "echarts-for-react";
+import { calcStats } from "@/utils/caclStats";
 
 export const AllPosts = () => {
   const [posts, setPosts] = useState<Post[]>([]);
+  const [myData, setMyData] = useState({
+    win: 0,
+    draw: 0,
+    lose: 0,
+    count: 0,
+    rate: {
+      winRate: 33.5,
+      drawRate: 33.5,
+      loseRate: 33,
+    },
+  });
+  const [gameDate, setGameDate] = useState<string[]>([]);
   const [currentYear, setCurrentYear] = useState(
     new Date().getFullYear().toString(),
   );
@@ -25,7 +39,18 @@ export const AllPosts = () => {
       try {
         const res = await getMyAllRecords();
         if (res.status === 200) {
-          setPosts(res.data);
+          setPosts(res.data.posts);
+          const dates = res.data.posts.map((p: Post) => p.gameDate);
+
+          setPosts(res.data.posts);
+          setGameDate(dates);
+          setMyData({
+            win: res.data.win,
+            draw: res.data.draw,
+            lose: res.data.lose,
+            count: res.data.count,
+            rate: calcStats(res.data.win, res.data.draw, res.data.lose),
+          });
         }
       } catch (e) {
         console.error(e);
@@ -74,7 +99,7 @@ export const AllPosts = () => {
         }
       },
       {
-        rootMargin: "-20% 0px -70% 0px",
+        rootMargin: "20% 0px -70% 0px",
         threshold: 0,
       },
     );
@@ -84,43 +109,141 @@ export const AllPosts = () => {
   }, []);
 
   // 받아온 데이터를 연도-월 이런 식으로 그룹화
-  const groupedPosts = posts.reduce(
-    (acc, post) => {
-      const date = new Date(post.createdAt);
-      const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
-      if (!acc[key]) acc[key] = [];
-      acc[key].push(post);
-      return acc;
-    },
-    {} as Record<string, Post[]>,
-  );
+  const groupedPosts = useMemo(() => {
+    if (!posts.length) return {};
+
+    return posts.reduce(
+      (acc, post, idx) => {
+        // gameDate 날짜 가져오기
+        const dateStr = gameDate[idx] || post.gameDate;
+
+        if (!dateStr) return acc;
+
+        // 파싱
+        const date = new Date(dateStr);
+        if (isNaN(date.getTime())) return acc; // 유효하지 않은 날짜 패스
+
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, "0");
+        const key = `${year}-${month}`;
+
+        if (!acc[key]) acc[key] = [];
+        acc[key].push(post);
+
+        return acc;
+      },
+      {} as Record<string, Post[]>,
+    );
+  }, [posts, gameDate]);
 
   const sortedKeys = Object.keys(groupedPosts).sort().reverse(); // 최신순으로 정렬하기
+
+  // 도넛 차트 옵션
+  const chartOption = {
+    // 승(블루), 무(그레이), 패(레드) 순서
+    color: ["#0046FF", "#D1D5DB", "#D91920"],
+    tooltip: {
+      trigger: "item",
+      formatter: "{b}: {c}번 ({d}%)",
+    },
+    series: [
+      {
+        name: "직관 통계",
+        type: "pie",
+        radius: ["60%", "85%"], // 도넛 두께
+        avoidLabelOverlap: false,
+        itemStyle: {
+          borderRadius: 6,
+          borderColor: "#fff",
+          borderWidth: 2,
+        },
+        label: { show: false },
+        emphasis: {
+          label: { show: false },
+        },
+        data: [
+          { value: myData.win, name: "승리" },
+          { value: myData.draw, name: "무승부" },
+          { value: myData.lose, name: "패배" },
+        ],
+      },
+    ],
+  };
 
   return (
     <>
       <div className="relative w-full min-h-screen pb-40">
-        <div
-          className="sticky top-15 z-50 flex flex-col items-center py-20
-         bg-background backdrop-blur-md"
-        >
-          <Typography
-            variant="display"
-            className="text-5xl! font-black italic tracking-tighter mb-4"
-          >
-            나의 직관 기록 <span className="text-primary"> .</span>
-          </Typography>
-          <Typography
-            variant="display"
-            className="text-5xl! font-black italic tracking-tighter mb-4"
-          >
-            {currentYear}
-          </Typography>
+        <div className="sticky top-15 z-50 w-full flex justify-between items-center px-24 py-6 bg-background backdrop-blur-md shadow-sm">
+          <div className="flex flex-col items-start py-20 mr-60">
+            <Typography
+              variant="display"
+              className="text-5xl! font-black tracking-tighter mb-4"
+            >
+              나의 직관 기록 <span className="text-primary"> .</span>
+            </Typography>
+            <Typography
+              variant="display"
+              className="text-5xl! font-black italic tracking-tighter mb-4"
+            >
+              {currentYear}
+            </Typography>
+          </div>
+
+          {/* 오른쪽에 승률이랑 직관 기록 작게 보여주기 */}
+          <div className="flex items-center gap-8 p-6 rounded-2xl shadow-sm">
+            <div className="relative w-32 h-32">
+              <ReactECharts
+                option={chartOption}
+                style={{ height: "100%", width: "100%" }}
+              />
+              <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                <span className="text-xl font-black text-secondary">
+                  {myData.count}
+                </span>
+                <span className="text-[10px] font-bold text-gray-400 uppercase">
+                  경기
+                </span>
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <Typography
+                variant="body-sm"
+                className="font-bold! text-gray-400 mb-1"
+              >
+                전체 승률{" "}
+                <span className="text-primary ml-1">
+                  {myData.rate.winRate}%
+                </span>
+              </Typography>
+              <div className="flex gap-4">
+                <StatBadge
+                  label="승"
+                  value={myData.rate.winRate.toString()}
+                  color="bg-[#0046FF]"
+                />
+                <StatBadge
+                  label="무"
+                  value={myData.rate.drawRate.toString()}
+                  color="bg-gray-300"
+                />
+                <StatBadge
+                  label="패"
+                  value={myData.rate.loseRate.toString()}
+                  color="bg-[#D91920]"
+                />
+              </div>
+            </div>
+          </div>
         </div>
 
         <div className="flex flex-col gap-24 mt-30 pb-40">
           {sortedKeys.length > 0 ? (
-            <AllPostsImages posts={posts} observer={observer.current} />
+            <AllPostsImages
+              groupedPosts={groupedPosts}
+              sortedKeys={sortedKeys}
+              observer={observer.current}
+            />
           ) : (
             <div className="flex justify-center items-center h-64 text-textSub font-bold">
               기록된 직관 일지가 없습니다.
@@ -131,3 +254,21 @@ export const AllPosts = () => {
     </>
   );
 };
+
+const StatBadge = ({
+  label,
+  value,
+  color,
+}: {
+  label: string;
+  value: string;
+  color: string;
+}) => (
+  <div className="flex flex-col items-center gap-1">
+    <div className="flex items-center gap-1.5">
+      <div className={`w-2 h-2 rounded-full ${color}`} />
+      <span className="text-xs font-bold text-gray-500">{label}</span>
+    </div>
+    <span className="text-lg font-black">{value}</span>
+  </div>
+);

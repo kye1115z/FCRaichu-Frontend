@@ -9,6 +9,8 @@ import PH from "@/assets/logos/포항.svg";
 import JE from "@/assets/logos/제주.svg";
 import IC from "@/assets/logos/인천.svg";
 import GW from "@/assets/logos/강원.svg";
+import SW from "@/assets/logos/수원FC.svg";
+import DG from "@/assets/logos/대구.svg";
 
 export const FC_TEAMS = [
   {
@@ -76,5 +78,17 @@ export const FC_TEAMS = [
     team: "강원FC",
     location: "강원",
     image: GW,
+  },
+  {
+    id: 12,
+    team: "수원FC",
+    location: "수원FC",
+    image: SW,
+  },
+  {
+    id: 13,
+    team: "대구",
+    location: "대구",
+    image: DG,
   },
 ];

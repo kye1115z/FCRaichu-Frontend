@@ -15,9 +15,16 @@ interface Game {
 interface Props {
   value: number;
   onChange: (id: number) => void;
+  isEditMode?: boolean;
+  initialGameId?: number;
 }
 // DONE: Date Picker 컴포넌트 만들기
-export default function DatePicker({ value, onChange }: Props) {
+export default function DatePicker({
+  value,
+  onChange,
+  isEditMode,
+  initialGameId,
+}: Props) {
   // 초기값은 빈 배열
   const [games, setGames] = useState<Game[]>([]);
 
@@ -42,8 +49,17 @@ export default function DatePicker({ value, onChange }: Props) {
             .filter((game: Game) => {
               const gameDate = new Date(game.date);
               // DONE: 오늘 경기를 기준으로 이전 경기만 보여주기
+              const isPastOrToday = gameDate <= today;
+
               // 내가 이미 썼던 경기(writtenGameIds)는 제외하기
-              return gameDate <= today && !writtenGameIds.includes(game.id);
+              // 이미 썼던 경기이지만 수정 모드라면 목록에 포함시킨다.
+              const isNotWritten = !writtenGameIds.includes(game.id);
+              const isOriginalGameInEditMode =
+                isEditMode && game.id === initialGameId;
+
+              return (
+                isPastOrToday && (isNotWritten || isOriginalGameInEditMode)
+              );
             })
             .sort((a: Game, b: Game) => {
               // 최신순으로 정렬함

@@ -112,7 +112,7 @@ export const Ranking = () => {
         <section>
           <div className="flex items-center gap-4 mb-8 border-l-8 border-primary pl-4">
             <Typography variant="h1" color="text-textMain" className="italic">
-              ATTENDANCE
+              직관왕
             </Typography>
           </div>
           <div className="flex flex-col gap-4">
@@ -134,7 +134,7 @@ export const Ranking = () => {
         <section>
           <div className="flex items-center gap-4 mb-8 border-l-8 border-secondary pl-4">
             <Typography variant="h1" color="text-textMain" className="italic">
-              WIN RATE
+              승리 요정
             </Typography>
           </div>
           <div className="flex flex-col gap-4">

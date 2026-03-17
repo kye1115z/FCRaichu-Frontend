@@ -70,14 +70,13 @@ export default function DatePicker({
           });
 
         setGames(filteredAndSorted);
-        console.log(filteredAndSorted);
 
         // 초기값이 없을 때 첫 번째 경기를 기본값으로 설정.
         if (filteredAndSorted.length > 0 && !value) {
           onChange(filteredAndSorted[0].id);
         }
       } catch (e) {
-        console.log(e);
+        console.error(e);
       }
     };
 

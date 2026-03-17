@@ -27,7 +27,6 @@ export default function SupportModal({ player, onClose }: SupportModalProps) {
             `${player.name} 선수에게 ${supportPoints}포인트를 후원합니다! ❤️`,
           );
           const userRes = await getUserInfo();
-          console.log(userRes.data.points);
           updateUser({
             ...user,
             points: userRes.data.points,
@@ -35,7 +34,7 @@ export default function SupportModal({ player, onClose }: SupportModalProps) {
         }
       }
     } catch (e) {
-      console.log(e);
+      console.error(e);
     }
 
     onClose();

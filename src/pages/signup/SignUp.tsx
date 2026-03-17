@@ -30,7 +30,7 @@ export default function SignUp() {
         navigate("/login");
       }
     } catch (error) {
-      console.log("회원가입 실패: ", error);
+      console.error("회원가입 실패: ", error);
     }
   };
 

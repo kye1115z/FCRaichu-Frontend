@@ -127,7 +127,7 @@ export default function Header() {
                 to="/donation"
                 className={({ isActive }) => getNavItemStyle(isActive)}
               >
-                Donation
+                후원하기
               </NavLink>
             </li>
           </ul>

@@ -4,6 +4,7 @@ import type { Game } from "./game";
 export interface Post {
   postId: number;
   gameId: number;
+  gameDate: string;
   title: string;
   content: string;
   images: string[];

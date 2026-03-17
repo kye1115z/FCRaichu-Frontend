@@ -36,11 +36,17 @@ export default function RecordWriteStep() {
   const context = useOutletContext<PostContext>() || {};
   const { selectedGameId, initialData, isEditMode } = context;
 
+
   // 직관 기록 post 시 보낼 데이터 정의 (근데 이제 수정 모드를 반영함)
   const [formData, setFormData] = useState({
     title: isEditMode ? initialData.title : "",
     content: isEditMode ? initialData.content : "",
   });
+
+  const trimmedTitle = formData.title.trim();
+  const trimmedContent = formData.content.trim();
+
+  const isSubmitDisabled = !trimmedTitle || !trimmedContent || !selectedGameId;
 
   const isHeicFile = async (file: File) => {
     const name = file.name.toLowerCase();
@@ -187,23 +193,30 @@ export default function RecordWriteStep() {
   // DONE: 제출 로직 작성하기
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!formData.title.trim()) return alert("제목을 입력해주세요.");
+
+    const trimmedTitle = formData.title.trim();
+    const trimmedContent = formData.content.trim();
+
+    if (!trimmedTitle) return alert("제목을 입력해주세요.");
+    if (!trimmedContent) return alert("후기를 입력해주세요.");
     if (!selectedGameId) return alert("경기를 선택해주세요.");
 
     try {
       let res;
       if (isEditMode) {
-        // 수정 모드일 때
         res = await putMyRecord(Number(postId), {
           ...formData,
+          title: trimmedTitle,
+          content: trimmedContent,
           gameId: selectedGameId,
-          existingImages: existingImages, // 서버에 유지할 이미지 경로
-          images: imageFiles, // 새로 추가된 파일들
+          existingImages: existingImages,
+          images: imageFiles,
         });
       } else {
-        // 작성 모드일 때
         res = await postMyRecord({
           ...formData,
+          title: trimmedTitle,
+          content: trimmedContent,
           gameId: selectedGameId,
           userId: Number(user?.id),
           images: imageFiles,
@@ -279,7 +292,13 @@ export default function RecordWriteStep() {
 
           <button
             type="submit"
-            className="w-full py-4 bg-primary text-white font-bold text-xl rounded-xl hover:bg-hover transition-all shadow-lg active:scale-[0.98] cursor-pointer"
+            disabled={isSubmitDisabled}
+            className={`w-full py-4 font-bold text-xl rounded-xl transition-all shadow-lg active:scale-[0.98]
+    ${
+      isSubmitDisabled
+        ? "bg-gray-300 text-white cursor-not-allowed"
+        : "bg-primary text-white hover:bg-hover cursor-pointer"
+    }`}
           >
             {isEditMode ? "수정 완료" : "저장하기"}
           </button>

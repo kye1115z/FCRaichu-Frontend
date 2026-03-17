@@ -14,19 +14,22 @@ export const NicknameEditModal = ({ currentNickname, onClose }: Props) => {
   const { user } = useAuthStore();
   const updateUser = useAuthStore((state) => state.updateUser);
 
+  const trimmedNickname = newNickname.trim();
+  const hasWhitespace = /\s/.test(newNickname);
+
+  const isDisabled =
+    !trimmedNickname ||
+    trimmedNickname === currentNickname ||
+    hasWhitespace;
+
   const handleUpdate = async () => {
-    if (!newNickname.trim() || newNickname === currentNickname) {
-      onClose();
-      return;
-    }
+    if (isDisabled) return;
 
     try {
-      // DONE: API 연결
-      const res = await patchNickname(newNickname);
+      const res = await patchNickname(trimmedNickname);
       if (res.status === 200) {
-        // API 연결 후에 auth 도 변경
         if (user) {
-          updateUser({ nickname: newNickname });
+          updateUser({ nickname: trimmedNickname });
         }
         alert("닉네임이 변경되었습니다.");
         onClose();
@@ -62,6 +65,12 @@ export const NicknameEditModal = ({ currentNickname, onClose }: Props) => {
               className="w-full p-3 bg-gray-50 border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
               autoFocus
             />
+
+            {hasWhitespace && (
+              <p className="text-xs text-red-500 ml-1">
+                닉네임에는 공백을 포함할 수 없습니다.
+              </p>
+            )}
           </div>
 
           <div className="flex gap-2 mt-2">
@@ -73,7 +82,13 @@ export const NicknameEditModal = ({ currentNickname, onClose }: Props) => {
             </button>
             <button
               onClick={handleUpdate}
-              className="flex-1 py-3 text-sm font-bold text-white bg-primary rounded-xl hover:bg-hover transition-all shadow-md cursor-pointer"
+              disabled={isDisabled}
+              className={`flex-1 py-3 text-sm font-bold rounded-xl transition-all shadow-md
+                ${
+                  isDisabled
+                    ? "bg-gray-300 text-white cursor-not-allowed"
+                    : "bg-primary text-white hover:bg-hover cursor-pointer"
+                }`}
             >
               변경하기
             </button>

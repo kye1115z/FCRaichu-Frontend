@@ -1,14 +1,17 @@
-import { getGameById } from "@/apis/games/gameApi";
-import { deleteMyRecord, getRecordById } from "@/apis/posts/postApi";
-import ImageSlider from "@/components/postDetail/ImageSlider";
-import MatchInfo from "@/components/postDetail/MatchInfo";
-import { useAuthStore } from "@/stores/useAuthStore";
-import Typography from "@/styles/common/Typography";
-import { formatDate } from "@/utils/formatDate";
+import { useNavigate, useParams } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+
+import { useAuthStore } from "@/stores/useAuthStore";
+import { getGameById } from "@/features/game/api/gameApi";
+import { deleteMyRecord, getRecordById } from "@/features/post/api/postApi";
+import ImageSlider from "@/features/post/components/detail/ImageSlider";
+import MatchInfo from "@/features/post/components/detail/MatchInfo";
+import Typography from "@/components/common/Typography";
+import { formatDate } from "@/utils/formatDate";
+
+// 아이콘
 import { FiEdit } from "react-icons/fi";
 import { MdOutlineDeleteForever } from "react-icons/md";
-import { useNavigate, useParams } from "react-router-dom";
 
 export default function PostDetail() {
   const navigate = useNavigate();

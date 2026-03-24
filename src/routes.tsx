@@ -1,17 +1,21 @@
 import { createBrowserRouter } from "react-router-dom";
+import { queryClient } from "./QueryClient";
+
+import { playersLoader } from "./features/donation/api/player";
+
 import RootLayout from "./layouts/RootLayout";
+import PostWriteBaseLayout from "./layouts/PostBaseLayout";
+import MyPostLayout from "./layouts/MyPostLayout";
+
 import Home from "./pages/Home";
 import Login from "./pages/Login";
-import SignUp from "./pages/signup/SignUp";
-import RecordWriteStep from "./components/post/RecordWriteStep";
+import SignUp from "./pages/SignUp";
 import Donation from "./pages/Donation";
-import { GamePicker } from "./components/post/GamePickerStep";
-import PostWriteBaseLayout from "./layouts/PostBaseLayout";
-import { AllPosts } from "./components/post/AllPosts";
-import MyPostLayout from "./layouts/MyPostLayout";
 import PostDetail from "./pages/PostDetail";
-import { playersLoader } from "./apis/player/player";
-import { queryClient } from "./QueryClient";
+
+import RecordWriteStep from "./features/post/components/write/RecordWriteStep";
+import { GamePicker } from "./features/post/components/write/GamePickerStep";
+import { AllPosts } from "./features/post/components/list/AllPosts";
 
 // React Router 팀에서 권장하는 Data APIs & 객체 스타일 방식을 사용해 보았다.
 export const router = createBrowserRouter([

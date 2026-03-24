@@ -1,4 +1,4 @@
-import Typography from "@/styles/common/Typography";
+import Typography from "./Typography";
 import type { InputHTMLAttributes } from "react";
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {

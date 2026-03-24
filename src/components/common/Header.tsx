@@ -2,7 +2,7 @@ import { useAuthStore } from "@/stores/useAuthStore";
 import { Link, NavLink, useLocation } from "react-router-dom";
 import fcseoul_logo from "@/assets/fcseoul_logo.png";
 import { useEffect, useRef, useState } from "react";
-import { UserModal } from "./UserModal";
+import { UserModal } from "@components/modal/UserModal";
 import { LuMenu, LuX } from "react-icons/lu";
 
 export default function Header() {

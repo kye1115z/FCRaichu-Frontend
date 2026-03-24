@@ -12,15 +12,17 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"],
-      "@apis/*": ["src/apis/*"],
+      "@api/*": ["src/api/*"],
+      "@assets/*": ["src/assets/*"],
       "@components/*": ["src/components/*"],
       "@data/*": ["src/data/*"],
+      "@features/*": ["src/features/*"],
       "@hooks/*": ["src/hooks/*"],
       "@layouts/*": ["src/layouts/*"],
+      "@mocks/*": ["src/mocks/*"],
       "@pages/*": ["src/pages/*"],
       "@stores/*": ["src/stores/*"],
       "@styles/*": ["src/styles/*"],
-      "@types/*": ["src/types/*"],
       "@utils/*": ["src/utils/*"]
     },
 

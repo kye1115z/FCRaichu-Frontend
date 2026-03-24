@@ -1,0 +1,23 @@
+import type { QueryClient } from "@tanstack/react-query";
+import { api } from "@api/axiosInstance";
+
+// 현역 선수 전체 조회
+export const getAllActivePlayers = async () => {
+  const res = await api.get(`/api/players/active`);
+  return res.data;
+};
+
+// donation
+export const postDonation = async (playerId: number, points: number) => {
+  const res = await api.post(`/api/donation/${playerId}?point=${points}`);
+  return res.data;
+};
+
+// 플레이어 playersLoader
+export const playersLoader = (queryClient: QueryClient) => async () => {
+  return await queryClient.fetchQuery({
+    queryKey: ["activePlayers"],
+    queryFn: getAllActivePlayers,
+    staleTime: 1000 * 60 * 60,
+  });
+};

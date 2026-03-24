@@ -15,13 +15,14 @@
 // 2-2 는 post/season-pass/new
 // 2-1과 2-2는 같은 컴포넌트 사용할 것.
 
-import { StepTracker } from "@/components/post/StepTracker";
-import DatePicker from "@/components/post/DatePicker";
-import Typography from "@/styles/common/Typography";
 import { useEffect, useState } from "react";
 import { Outlet, useLocation, useParams } from "react-router-dom";
-import { getRecordById } from "@/apis/posts/postApi";
-import type { Post } from "@/types/post";
+
+import { getRecordById } from "@/features/post/api/postApi";
+import type { Post } from "@/features/post/types/post";
+import { StepTracker } from "@/features/post/components/write/StepTracker";
+import DatePicker from "@/features/post/components/write/DatePicker";
+import Typography from "@/components/common/Typography";
 
 export default function PostWriteBaseLayout() {
   // ⭐️ 이전 페이지에서 gameId를 넘겨준 경우 state 받아와서 분기 처리

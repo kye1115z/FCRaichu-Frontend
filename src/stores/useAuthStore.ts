@@ -1,6 +1,6 @@
-import type { User } from "@/types/auth";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import type { User } from "@/features/auth/types/auth";
 
 // 유저 상태
 interface AuthState {

@@ -1,11 +1,11 @@
-import { GameCalendar } from "@/components/home/GameCalendar";
-import { Ranking } from "@/components/home/Ranking";
-import { MyRecords } from "@/components/home/MyPosts";
-import { useAuthStore } from "@/stores/useAuthStore";
 import { useEffect, useState } from "react";
-import { AttendanceCheckModal } from "@/components/common/AttendanceCheckModal";
-import IntroAnimation from "@/components/landing/IntroAnimation";
-import "./Home.css";
+import styles from "./Home.module.css";
+import { useAuthStore } from "@/stores/useAuthStore";
+import { GameCalendar } from "@/features/game/components/GameCalendar";
+import { Ranking } from "@/features/ranking/components/Ranking";
+import { MyRecords } from "@/features/post/components/list/MyPosts";
+import IntroAnimation from "@/features/landing/components/IntroAnimation";
+import { AttendanceCheckModal } from "@/components/modal/AttendanceCheckModal";
 
 export default function Home() {
   const { user } = useAuthStore();
@@ -53,7 +53,7 @@ export default function Home() {
       {/* 랜딩 레이어 */}
       {isLanding && (
         <div
-          className={`fixed inset-0 z-999 bg-white landing-layer ${isExiting ? "landing-exit" : ""}`}
+          className={`fixed inset-0 z-999 bg-white landing-layer ${isExiting ? `${styles.landingExit}` : ""}`}
         >
           <IntroAnimation />
         </div>
@@ -61,7 +61,9 @@ export default function Home() {
 
       {/* 메인 콘텐츠 */}
       {/* 인트로가 아예 필요 없는 방문자라면 바로 보여주고, 인트로 중이면 opacity-0 유지 */}
-      <main className={`mb-60 ${!isLanding ? "content-fade-in" : "opacity-0"}`}>
+      <main
+        className={`mb-60 ${!isLanding ? `${styles.contentFadeIn}` : "opacity-0"}`}
+      >
         {/* 캘린더 */}
         <GameCalendar />
         {/* 직관 기록 */}

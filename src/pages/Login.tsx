@@ -1,10 +1,11 @@
-import { getLogin } from "@/apis/auth/authApi";
-import Button from "@/components/common/Button";
-import Input from "@/components/common/Input";
-import LogoAnimation from "@/components/login/LogoAnimation";
-import Typography from "@/styles/common/Typography";
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+
+import { getLogin } from "@/features/auth/api/authApi";
+import LogoAnimation from "@/features/auth/components/login/LogoAnimation";
+import Typography from "@/components/common/Typography";
+import Button from "@/components/common/Button";
+import Input from "@/components/common/Input";
 
 export default function Login() {
   const navigate = useNavigate();

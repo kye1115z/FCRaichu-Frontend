@@ -1,4 +1,4 @@
-import PlayerSlider from "@/components/donation/PlayerSlider";
+import PlayerSlider from "@/features/donation/components/PlayerSlider";
 
 export default function DonationPage() {
   return (

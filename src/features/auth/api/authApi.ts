@@ -31,7 +31,8 @@ const clearAuthGarbage = () => {
  */
 export const loginWithKeycloak = async () => {
   clearAuthGarbage();
-  sessionStorage.clear();
+  sessionStorage.removeItem("code_verifier");
+  sessionStorage.removeItem("oauth_state");
 
   const codeVerifier = generateCodeVerifier();
   const codeChallenge = await generateCodeChallenge(codeVerifier);
